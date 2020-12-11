@@ -1,0 +1,13 @@
+# Service that triggers a sel-test of a node and publishes
+# a diagnostic status.
+#
+# This service specification is a copy of
+# common_interfaces/diagnostic_msgs/srv/SelfTest.srv
+# with the difference that it comprises just one
+# MicroROSDiagnosticStatus instead of an array of
+# DiagnosticStatus messages.
+
+---
+string id
+byte passed
+MicroROSDiagnosticStatus status
