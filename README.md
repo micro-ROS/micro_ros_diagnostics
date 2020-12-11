@@ -21,7 +21,7 @@ standards, e.g., ISO 26262.
 
 ## How to Build, Test, Install, and Use
 
-After you cloned this repository into your ROS 2 workspace folder, you may build and install it using colcon:
+After you cloned this repository into your ROS 2 workspace folder, you may build and install it using colcon:  
 $ `colcon build --packages-select-regex micro_ros_common_diagnostics`
 
 ## License
@@ -35,7 +35,7 @@ see the file [3rd-party-licenses.txt](3rd-party-licenses.txt).
 
 Please notice the following issues/limitations:
 
-* Currently, micro-ROS diagnostic updaters are not immediately compatible with ROS 2 diagnostic aggregators due to the different message type. This is due to limitated support of message types in micro-ROS.
+1. Due to limitations in the Micro-ROS agent, the micro-ROS diagnostics framework can't (yet) publish the default ROS 2 diagnostic messages [diagnostic_msgs](https://github.com/ros2/common_interfaces/tree/master/diagnostic_msgs), but provides simplified versions of the diagnostic messages and services that go without arrays. These simplified messages and services will have to be translated by the agent or a 3rd party.
 
 ## Acknowledgments
 
