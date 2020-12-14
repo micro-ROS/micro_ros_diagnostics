@@ -8,8 +8,7 @@ endif()
 
 # find dependencies
 find_package(ament_cmake REQUIRED)
-find_package(lifecycle_msgs REQUIRED)
-find_package(rcl_lifecycle REQUIRED)
+find_package(micro_ros_diagnostic_msgs REQUIRED)
 find_package(rclc REQUIRED)
 
 
@@ -39,9 +38,16 @@ target_include_directories(${PROJECT_NAME}
 ament_target_dependencies(${PROJECT_NAME}
   rclc
   rcutils
-  rcl_lifecycle
-  lifecycle_msgs
+  micro_ros_diagnostic_msgs
 )
+
+include_directories(include)
+add_executable(example_updater example/example_updater.c)
+target_link_libraries(example_updater ${PROJECT_NAME})
+ament_target_dependencies(example_updater
+  rclc
+  rcutils
+  micro_ros_diagnostic_msgs)
 
 # install
 install(DIRECTORY include/ DESTINATION include)
