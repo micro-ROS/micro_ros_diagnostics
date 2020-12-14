@@ -18,6 +18,8 @@
 #define MICRO_ROS_DIAGNOSTIC_UPDATER__MICRO_ROS_DIAGNOSTIC_UPDATER_H_
 
 #include <rcl/types.h>
+#include <rclc/publisher.h>
+#include <micro_ros_diagnostic_msgs/msg/micro_ros_diagnostic_status.h>
 
 #define MICRO_ROS_UPDATER_MAX_NUMBER_OF_TASKS 5
 
@@ -40,6 +42,8 @@ typedef struct diagnostic_updater_t
   const char * hardware_id;
   int num_tasks;
   diagnostic_task_t * tasks[MICRO_ROS_UPDATER_MAX_NUMBER_OF_TASKS];
+  rcl_publisher_t diag_pub;
+  micro_ros_diagnostic_msgs__msg__MicroROSDiagnosticStatus diag_status;
 } diagnostic_updater_t;
 
 rcl_ret_t
@@ -51,6 +55,7 @@ rclc_diagnostic_task_init(
 rcl_ret_t
 rclc_diagnostic_updater_init(
   diagnostic_updater_t * updater,
+  const rcl_node_t * node,
   const char * name,
   const char * message,
   const char * hardware_id);
