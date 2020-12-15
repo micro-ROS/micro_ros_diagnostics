@@ -1,0 +1,44 @@
+name: CI Micro-ROS Diagnostics
+
+on:
+  push:
+    branches: [ master ]
+  pull_request:
+    branches: [ master ]
+  schedule:
+    # Run once per day to detect broken dependencies.
+    - cron: '33 6 * * *'
+
+jobs:
+  build:
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        # os: [ ubuntu-20.04, windows-latest, macOS-latest ]
+        os: [ ubuntu-20.04 ]
+        ros_distribution: [ foxy, rolling, eloquent, dashing ]
+        include:
+          - docker_image: ubuntu:bionic
+            ros_distribution: dashing
+
+          - docker_image: ubuntu:bionic
+            ros_distribution: eloquent
+
+          - docker_image: ubuntu:focal
+            ros_distribution: foxy
+
+          - docker_image: ubuntu:focal
+            ros_distribution: rolling
+    container:
+      image: ${{ matrix.docker_image }}
+    steps:
+    - uses: actions/checkout@v2
+    - uses: ros-tooling/setup-ros@0.0.26
+      with:
+        required-ros-distributions: ${{ matrix.ros_distribution }}
+    - uses : ros-tooling/action-ros-ci@0.1.0
+      with:
+        package-name: "micro_ros_diagnostic_msgs micro_ros_diagnostic_updater"
+        vcs-repo-file-url: ""
+        target-ros2-distro: ${{ matrix.ros_distribution }}
