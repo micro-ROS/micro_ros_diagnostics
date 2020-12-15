@@ -1,4 +1,4 @@
-General information about this repository, including legal information, build instructions and known issues/limitations, can be found in the [README](../README.md) of the repository root.
+General information about this repository, including legal information, build instructions and known issues/limitations, can be found in the [README](./README.md) of the repository root.
 
 # The micro-ROS diagnostics framework packages
 
@@ -22,7 +22,7 @@ standards, e.g., ISO 26262.
 ## How to Build, Test, Install, and Use
 
 After you cloned this repository into your ROS 2 workspace folder, you may build and install it using colcon:  
-$ `colcon build --packages-select-regex micro_ros_common_diagnostics`
+$ `colcon build --packages-select-regex micro_ros_.*diagn`
 
 ## License
 
