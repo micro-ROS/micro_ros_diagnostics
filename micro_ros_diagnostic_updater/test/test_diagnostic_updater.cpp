@@ -43,11 +43,11 @@ const char* update_function_mockup_1()
 
 TEST(TestDiagnosticUpdater, create_diagnostic_task) {
   diagnostic_task_t task;
-  rcl_ret_t res = rclc_diagnostic_task_init(
+  rcl_ret_t rc = rclc_diagnostic_task_init(
     &task,
     "mytemperatur",
     &update_function_mockup_0);
-  EXPECT_EQ(RCL_RET_OK, res);
+  EXPECT_EQ(RCL_RET_OK, rc);
 }
 
 TEST(TestDiagnosticUpdater, create_updater) {
@@ -59,19 +59,18 @@ TEST(TestDiagnosticUpdater, create_updater) {
   rc = rclc_support_init(&support, 0, nullptr, &allocator);
   const char * my_name = "test_updater_node";
   const char * my_namespace = "";
-  const char * topic_name = "diagnostic_test";
   rcl_node_t node = rcl_get_zero_initialized_node();
   rc = rclc_node_init_default(&node, my_name, my_namespace, &support);
 
  // updater
   diagnostic_updater_t updater;
-  rcl_ret_t res = rclc_diagnostic_updater_init(
+  rc = rclc_diagnostic_updater_init(
     &updater,
     &node,
     "hw",
     "mocked hardware monitoring",
     "42");
-  EXPECT_EQ(RCL_RET_OK, res);
+  EXPECT_EQ(RCL_RET_OK, rc);
 }
 
 TEST(TestDiagnosticUpdater, updater_add_tasks) {
@@ -83,44 +82,43 @@ TEST(TestDiagnosticUpdater, updater_add_tasks) {
   rc = rclc_support_init(&support, 0, nullptr, &allocator);
   const char * my_name = "test_updater_node";
   const char * my_namespace = "";
-  const char * topic_name = "diagnostic_test";
   rcl_node_t node = rcl_get_zero_initialized_node();
   rc = rclc_node_init_default(&node, my_name, my_namespace, &support);
 
  // updater
   diagnostic_updater_t updater;
-  rcl_ret_t res = rclc_diagnostic_updater_init(
+  rc = rclc_diagnostic_updater_init(
     &updater,
     &node,
     "hw",
     "mocked hardware monitoring",
     "42");
-  EXPECT_EQ(RCL_RET_OK, res);
+  EXPECT_EQ(RCL_RET_OK, rc);
 
   diagnostic_task_t task;
-  res = rclc_diagnostic_task_init(
+  rc = rclc_diagnostic_task_init(
     &task,
     "mytemperatur",
     &update_function_mockup_0);
-  EXPECT_EQ(RCL_RET_OK, res);
+  EXPECT_EQ(RCL_RET_OK, rc);
 
-  res = rclc_diagnostic_updater_add_task(
+  rc = rclc_diagnostic_updater_add_task(
     &updater,
     &task);
-  EXPECT_EQ(RCL_RET_OK, res);
+  EXPECT_EQ(RCL_RET_OK, rc);
 
   for (unsigned int i = 1; i < MICRO_ROS_UPDATER_MAX_NUMBER_OF_TASKS; ++i) {
-    res = rclc_diagnostic_updater_add_task(
+    rc = rclc_diagnostic_updater_add_task(
       &updater,
       &task);
-    EXPECT_EQ(RCL_RET_OK, res);
+    EXPECT_EQ(RCL_RET_OK, rc);
   }
 
   // Should exceed maximum number of tasks per updater
-  res = rclc_diagnostic_updater_add_task(
+  rc = rclc_diagnostic_updater_add_task(
     &updater,
     &task);
-  EXPECT_EQ(RCL_RET_ERROR, res);
+  EXPECT_EQ(RCL_RET_ERROR, rc);
 }
 
 TEST(TestDiagnosticUpdater, updater_update) {
@@ -132,39 +130,38 @@ TEST(TestDiagnosticUpdater, updater_update) {
   rc = rclc_support_init(&support, 0, nullptr, &allocator);
   const char * my_name = "test_updater_node";
   const char * my_namespace = "";
-  const char * topic_name = "diagnostic_test";
   rcl_node_t node = rcl_get_zero_initialized_node();
   rc = rclc_node_init_default(&node, my_name, my_namespace, &support);
 
  // updater
   diagnostic_updater_t updater;
-  rcl_ret_t res = rclc_diagnostic_updater_init(
+  rc = rclc_diagnostic_updater_init(
     &updater,
     &node,
     "hw",
     "mocked hardware monitoring",
     "42");
-  EXPECT_EQ(RCL_RET_OK, res);
+  EXPECT_EQ(RCL_RET_OK, rc);
 
   diagnostic_task_t task0, task1;
-  res = rclc_diagnostic_task_init(
+  rc = rclc_diagnostic_task_init(
     &task0,
     "mytemperatur",
     &update_function_mockup_0);
-  res = rclc_diagnostic_task_init(
+  rc = rclc_diagnostic_task_init(
     &task1,
     "myothertemperatur",
     &update_function_mockup_1);
 
-  res = rclc_diagnostic_updater_add_task(&updater, &task0);
-  res = rclc_diagnostic_updater_update(&updater);
+  rc = rclc_diagnostic_updater_add_task(&updater, &task0);
+  rc = rclc_diagnostic_updater_update(&updater);
   EXPECT_EQ(1, diagnostic_mockup_counter_0);
 
-  res = rclc_diagnostic_updater_add_task(&updater, &task1);
-  res = rclc_diagnostic_updater_update(&updater);
-  res = rclc_diagnostic_updater_update(&updater);
+  rc = rclc_diagnostic_updater_add_task(&updater, &task1);
+  rc = rclc_diagnostic_updater_update(&updater);
+  rc = rclc_diagnostic_updater_update(&updater);
   EXPECT_EQ(3, diagnostic_mockup_counter_0);
   EXPECT_EQ(2, diagnostic_mockup_counter_1);
 
-  EXPECT_EQ(RCL_RET_OK, res);
+  EXPECT_EQ(RCL_RET_OK, rc);
 }

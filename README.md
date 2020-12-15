@@ -35,7 +35,7 @@ see the file [3rd-party-licenses.txt](3rd-party-licenses.txt).
 
 Please notice the following issues/limitations:
 
-1. Due to limitations in the Micro-ROS agent, the micro-ROS diagnostics framework can't (yet) publish the default ROS 2 diagnostic messages [diagnostic_msgs](https://github.com/ros2/common_interfaces/tree/master/diagnostic_msgs), but provides simplified versions of the diagnostic messages and services that go without arrays. These simplified messages and services will have to be translated by the agent or a 3rd party.
+1. Due to limitations in the Micro-ROS agent, the micro-ROS diagnostics framework can't (yet) publish the default ROS 2 diagnostic messages [diagnostic_msgs](https://github.com/ros2/common_interfaces/tree/master/diagnostic_msgs), but provides simplified versions of the diagnostic messages and services that go without arrays, [MicroROSDiagnosticStatus](./micro_ros_diagnostic_msgs/msg/MicroROSDiagnosticStatus.msg) and [MicroROSSelfTest](./micro_ros_diagnostic_msgs/srv/MicroROSSelfTest.srv). These simplified messages and services will have to be translated by the agent or a 3rd party.
 
 ## Acknowledgments
 
