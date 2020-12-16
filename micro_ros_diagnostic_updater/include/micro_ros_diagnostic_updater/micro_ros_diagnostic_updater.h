@@ -1,6 +1,6 @@
 // Copyright (c) 2020 - for information on the respective copyright owner
-// see the NOTICE file and/or the repository https://github.com/ros2/rclc.
-// Copyright 2014 Open Source Robotics Foundation, Inc.
+// see the NOTICE file and/or the repository
+// https://github.com/micro-ROS/micro_ros_diagnostics.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -13,7 +13,6 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 #ifndef MICRO_ROS_DIAGNOSTIC_UPDATER__MICRO_ROS_DIAGNOSTIC_UPDATER_H_
 #define MICRO_ROS_DIAGNOSTIC_UPDATER__MICRO_ROS_DIAGNOSTIC_UPDATER_H_
 
@@ -32,7 +31,7 @@ typedef struct diagnostic_key_value_t
 typedef struct diagnostic_task_t
 {
   const char * name;
-  const char* (* function)(void);
+  const char * (*function)(void);
 } diagnostic_task_t;
 
 typedef struct diagnostic_updater_t
@@ -50,7 +49,7 @@ rcl_ret_t
 rclc_diagnostic_task_init(
   diagnostic_task_t * task,
   const char * name,
-  const char* (* function)(void));
+  const char * (*function)(void));
 
 rcl_ret_t
 rclc_diagnostic_updater_init(
@@ -65,7 +64,7 @@ rclc_diagnostic_updater_add_task(
   diagnostic_updater_t * updater,
   diagnostic_task_t * task);
 
-const char*
+const char *
 rclc_diagnostic_call_task(
   diagnostic_task_t * task);
 

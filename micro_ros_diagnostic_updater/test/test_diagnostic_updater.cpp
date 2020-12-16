@@ -1,4 +1,6 @@
-// Copyright 2020 Open Source Robotics Foundation, Inc.
+// Copyright (c) 2020 - for information on the respective copyright owner
+// see the NOTICE file and/or the repository
+// https://github.com/micro-ROS/micro_ros_diagnostics.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -11,31 +13,27 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
-// testing default transition sequence.
-// This test requires that the transitions are set
-// as depicted in design.ros2.org
-
 #include <stdio.h>
 #include <iostream>
+
 #include <gtest/gtest.h>
 
 extern "C"
 {
-#include <rclc/rclc.h> 
+#include <rclc/rclc.h>
 #include "micro_ros_diagnostic_updater/micro_ros_diagnostic_updater.h"
 }
 
 static int diagnostic_mockup_counter_0 = 0;
 static int diagnostic_mockup_counter_1 = 0;
 
-const char* update_function_mockup_0()
+const char * update_function_mockup_0()
 {
   ++diagnostic_mockup_counter_0;
   return "23 degrees";
 }
 
-const char* update_function_mockup_1()
+const char * update_function_mockup_1()
 {
   ++diagnostic_mockup_counter_1;
   return "42 degrees";
@@ -62,7 +60,7 @@ TEST(TestDiagnosticUpdater, create_updater) {
   rcl_node_t node = rcl_get_zero_initialized_node();
   rc = rclc_node_init_default(&node, my_name, my_namespace, &support);
 
- // updater
+  // updater
   diagnostic_updater_t updater;
   rc = rclc_diagnostic_updater_init(
     &updater,
@@ -85,7 +83,7 @@ TEST(TestDiagnosticUpdater, updater_add_tasks) {
   rcl_node_t node = rcl_get_zero_initialized_node();
   rc = rclc_node_init_default(&node, my_name, my_namespace, &support);
 
- // updater
+  // updater
   diagnostic_updater_t updater;
   rc = rclc_diagnostic_updater_init(
     &updater,
@@ -133,7 +131,7 @@ TEST(TestDiagnosticUpdater, updater_update) {
   rcl_node_t node = rcl_get_zero_initialized_node();
   rc = rclc_node_init_default(&node, my_name, my_namespace, &support);
 
- // updater
+  // updater
   diagnostic_updater_t updater;
   rc = rclc_diagnostic_updater_init(
     &updater,

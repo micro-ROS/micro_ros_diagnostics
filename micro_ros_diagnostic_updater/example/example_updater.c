@@ -1,5 +1,6 @@
 // Copyright (c) 2020 - for information on the respective copyright owner
-// see the NOTICE file and/or the repository https://github.com/micro-ROS/rclc.
+// see the NOTICE file and/or the repository
+// https://github.com/micro-ROS/micro_ros_diagnostics.
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
 // you may not use this file except in compliance with the License.
@@ -12,7 +13,6 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-
 #include <stdio.h>
 #include <unistd.h>
 
@@ -21,14 +21,15 @@
 #include "micro_ros_diagnostic_updater/micro_ros_diagnostic_updater.h"
 
 static int my_diagnostic_temp = 0;
-const char* my_diagnostic_function()
+
+const char * my_diagnostic_function()
 {
   static char dvalue[20] = "xx degrees";
   ++my_diagnostic_temp;
   if (my_diagnostic_temp > 99) {
     my_diagnostic_temp -= 0;
   }
-  sprintf(dvalue, "%d degrees", my_diagnostic_temp);
+  snprintf(dvalue, sizeof(dvalue), "%d degrees", my_diagnostic_temp);
 
   return dvalue;
 }

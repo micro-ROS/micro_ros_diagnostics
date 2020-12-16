@@ -21,6 +21,7 @@ find_package(rclc REQUIRED)
 find_package(rcutils REQUIRED)
 find_package(micro_ros_diagnostic_msgs REQUIRED)
 find_package(micro_ros_diagnostic_updater REQUIRED)
+set(ament_cmake_copyright_FOUND TRUE)
 
 add_executable(hwmonitor src/hwmonitor.cpp)
 target_include_directories(hwmonitor PUBLIC
