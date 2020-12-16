@@ -21,20 +21,32 @@ find_package(rclc REQUIRED)
 find_package(rcutils REQUIRED)
 find_package(micro_ros_diagnostic_msgs REQUIRED)
 find_package(micro_ros_diagnostic_updater REQUIRED)
+# the following line skips the linter which checks for copyrights
+# remove the line when a copyright and license is present in all source files
 set(ament_cmake_copyright_FOUND TRUE)
 
-add_executable(hwmonitor src/hwmonitor.cpp)
+add_executable(hwmonitor src/hwmonitor.c)
 target_include_directories(hwmonitor PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
 ament_target_dependencies(hwmonitor
+  "micro_ros_diagnostic_updater"
+  "micro_ros_diagnostic_msgs"
   "rclc"
   "rcutils"
-  "micro_ros_diagnostic_msgs"
-  "micro_ros_diagnostic_updater"
 )
 
 install(TARGETS hwmonitor
   DESTINATION lib/${PROJECT_NAME})
+
+  if(BUILD_TESTING)
+  find_package(ament_cmake_gtest REQUIRED)
+  find_package(ament_lint_auto REQUIRED)
+  find_package(osrf_testing_tools_cpp REQUIRED)
+  # the following line skips the linter which checks for copyrights
+  # remove the line when a copyright and license is present in all source files
+  set(ament_cmake_copyright_FOUND TRUE)
+  ament_lint_auto_find_test_dependencies()
+endif()
 
 ament_package()

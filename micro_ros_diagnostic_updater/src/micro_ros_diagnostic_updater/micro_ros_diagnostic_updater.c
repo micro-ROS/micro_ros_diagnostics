@@ -187,7 +187,6 @@ rclc_diagnostic_updater_update(
     }
   }
 
-  // TODO(anordman): we seem to have memory corruption
   micro_ros_diagnostic_msgs__msg__MicroROSDiagnosticStatus__fini(&diag_msg);
 
   return RCL_RET_OK;
