@@ -1,6 +1,6 @@
 General information about this repository, including legal information, build instructions and known issues/limitations, can be found in the [README](../README.md) of the repository root.
 
-# The micro-ROS common iagnostics package
+# The micro-ROS common diagnostics package
 
 micro-ROS diagnostic updater is a [ROS 2](http://www.ros2.org/) package that provides common microcontroller-specific diagnostic functions and monitors for micro-ROS.
 
