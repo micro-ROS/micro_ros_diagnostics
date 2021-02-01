@@ -88,6 +88,25 @@ rclc_diagnostic_updater_init(
 }
 
 rcl_ret_t
+rclc_diagnostic_updater_fini(
+  diagnostic_updater_t * updater,
+  rcl_node_t * node)
+{
+  RCL_CHECK_FOR_NULL_WITH_MSG(
+    updater, "updater is a null pointer", return RCL_RET_INVALID_ARGUMENT);
+
+  rcl_ret_t rc = rcl_publisher_fini(&updater->diag_pub, node);
+  if (RCL_RET_OK != rc) {
+    RCUTILS_LOG_ERROR(
+      "Error when cleaning '%s'. Could not delete publisher.",
+      updater->name);
+    return RCL_RET_ERROR;
+  }
+
+  return RCL_RET_OK;
+}
+
+rcl_ret_t
 rclc_diagnostic_updater_add_task(
   diagnostic_updater_t * updater,
   diagnostic_task_t * task)

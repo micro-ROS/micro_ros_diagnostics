@@ -69,6 +69,10 @@ TEST(TestDiagnosticUpdater, create_updater) {
     "mocked hardware monitoring",
     "42");
   EXPECT_EQ(RCL_RET_OK, rc);
+
+  // updater
+  rc = rclc_diagnostic_updater_fini(&updater, &node);
+  EXPECT_EQ(RCL_RET_OK, rc);
 }
 
 TEST(TestDiagnosticUpdater, updater_add_tasks) {
@@ -117,6 +121,10 @@ TEST(TestDiagnosticUpdater, updater_add_tasks) {
     &updater,
     &task);
   EXPECT_EQ(RCL_RET_ERROR, rc);
+
+  // updater
+  rc = rclc_diagnostic_updater_fini(&updater, &node);
+  EXPECT_EQ(RCL_RET_OK, rc);
 }
 
 TEST(TestDiagnosticUpdater, updater_update) {
@@ -160,6 +168,9 @@ TEST(TestDiagnosticUpdater, updater_update) {
   rc = rclc_diagnostic_updater_update(&updater);
   EXPECT_EQ(3, diagnostic_mockup_counter_0);
   EXPECT_EQ(2, diagnostic_mockup_counter_1);
+  EXPECT_EQ(RCL_RET_OK, rc);
 
+  // updater
+  rc = rclc_diagnostic_updater_fini(&updater, &node);
   EXPECT_EQ(RCL_RET_OK, rc);
 }
