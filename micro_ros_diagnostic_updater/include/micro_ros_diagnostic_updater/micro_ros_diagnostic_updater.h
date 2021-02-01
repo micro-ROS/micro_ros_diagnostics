@@ -60,6 +60,11 @@ rclc_diagnostic_updater_init(
   const char * hardware_id);
 
 rcl_ret_t
+rclc_diagnostic_updater_fini(
+  diagnostic_updater_t * updater,
+  rcl_node_t * node);
+
+rcl_ret_t
 rclc_diagnostic_updater_add_task(
   diagnostic_updater_t * updater,
   diagnostic_task_t * task);
