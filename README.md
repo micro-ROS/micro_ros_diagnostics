@@ -8,6 +8,13 @@ This [ROS 2](https://index.ros.org/doc/ros2/) package provides a simple diagnost
 * [micro_ros_diagnostic_updater](./micro_ros_diagnostic_updater/) - rclc convenience functions for diagnostic updaters, publishing micro-ROS diagnostic messages (see above)
 * [micro_ros_common_diagnostics](./micro_ros_common_diagnostics/) - Micro-controller specific monitors
 
+
+The micro-ROS diagnostics packages do not provide any aggregator as we assume that such aggregation takes place on a microprocessor running standard ROS 2. Hence, we assume the following typical architecture:
+
+<img src="diagnostics_architecture.png" style="display:block; width:100%; margin-left:auto; margin-right:auto;"/>
+
+In order for the standard ROS 2 diagnostic aggregator to aggregate micro-ROS diagnostic message types, the ROS 2 agent has to translate micro-ROS diagnostic messages to standard ROS 2 diagnostic messages (*tbd*).
+
 For further information, please contact [Arne Nordmann](https://github.com/norro) or [Ralph Lange](https://github.com/ralph-lange).
 
 ## Purpose of the Project
@@ -21,7 +28,7 @@ standards, e.g., ISO 26262.
 
 ## How to Build, Test, Install, and Use
 
-After you cloned this repository into your ROS 2 workspace folder, you may build and install it using colcon:  
+After you cloned this repository into your ROS 2 workspace folder, you may build and install it using colcon:
 $ `colcon build --packages-select-regex micro_ros_.*diagn`
 
 ## License
