@@ -42,9 +42,17 @@ ament_target_dependencies(${PROJECT_NAME}
 )
 
 include_directories(include)
-add_executable(example_updater example/example_updater.c)
-target_link_libraries(example_updater ${PROJECT_NAME})
-ament_target_dependencies(example_updater
+
+add_executable(example_processor_updater example/example_processor_updater.c)
+target_link_libraries(example_processor_updater ${PROJECT_NAME})
+ament_target_dependencies(example_processor_updater
+  rclc
+  rcutils
+  micro_ros_diagnostic_msgs)
+
+add_executable(example_website_checker example/example_website_checker.c)
+target_link_libraries(example_website_checker ${PROJECT_NAME})
+ament_target_dependencies(example_website_checker
   rclc
   rcutils
   micro_ros_diagnostic_msgs)
