@@ -43,10 +43,7 @@ typedef std::map<ValueLookup, std::string> ValueMap;
 class MicroROSDiagnosticBridge : public rclcpp::Node
 {
 public:
-  MicroROSDiagnosticBridge();
-
-protected:
-  virtual void read_lookup_table(const std::string & path);
+  explicit MicroROSDiagnosticBridge(const std::string & path = "");
 
   virtual const std::string lookup_hardware(
     unsigned int hardware_id);
@@ -59,6 +56,9 @@ protected:
     unsigned int updater_id,
     unsigned int key,
     unsigned int value_id);
+
+protected:
+  virtual void read_lookup_table(const std::string & path);
 
   rclcpp::Logger logger_;
   rclcpp::Subscription<uros_diagnostic_msg::MicroROSDiagnosticStatus>::SharedPtr uros_sub_;
