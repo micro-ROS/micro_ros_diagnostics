@@ -1,4 +1,4 @@
-// Copyright (c) 2018 - for information on the respective copyright owner
+// Copyright (c) 2021 - for information on the respective copyright owner
 // see the NOTICE file and/or the repository https://github.com/microros/system_modes
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -14,13 +14,19 @@
 // limitations under the License.
 #pragma once
 
+#include <utility>
+#include <tuple>
+#include <string>
+#include <map>
+#include <memory>
+
 #include "rclcpp/rclcpp.hpp"
 
 #include "diagnostic_msgs/msg/diagnostic_status.hpp"
 #include "micro_ros_diagnostic_msgs/msg/micro_ros_diagnostic_status.hpp"
 
 
-static const char UROS_DIAGNOSTICS_BRIDGE_TOPIC_IN[]  = "/diagnostics_uros";
+static const char UROS_DIAGNOSTICS_BRIDGE_TOPIC_IN[] = "/diagnostics_uros";
 static const char UROS_DIAGNOSTICS_BRIDGE_TOPIC_OUT[] = "/diagnostics";
 
 namespace uros_diagnostic_msg = micro_ros_diagnostic_msgs::msg;
@@ -37,13 +43,22 @@ typedef std::map<ValueLookup, std::string> ValueMap;
 class MicroROSDiagnosticBridge : public rclcpp::Node
 {
 public:
-    MicroROSDiagnosticBridge();
+  MicroROSDiagnosticBridge();
+
 protected:
   virtual void read_lookup_table(const std::string & path);
-  virtual const std::string lookup_hardware(unsigned int hardware_id);
-  virtual const std::pair<std::string, std::string> lookup_updater(unsigned int updater_id);
-  virtual const std::string lookup_key(unsigned int updater_id, unsigned int key);
-  virtual const std::string lookup_value(unsigned int updater_id, unsigned int key, unsigned int value_id);
+
+  virtual const std::string lookup_hardware(
+    unsigned int hardware_id);
+  virtual const std::pair<std::string, std::string> lookup_updater(
+    unsigned int updater_id);
+  virtual const std::string lookup_key(
+    unsigned int updater_id,
+    unsigned int key);
+  virtual const std::string lookup_value(
+    unsigned int updater_id,
+    unsigned int key,
+    unsigned int value_id);
 
   rclcpp::Logger logger_;
   rclcpp::Subscription<uros_diagnostic_msg::MicroROSDiagnosticStatus>::SharedPtr uros_sub_;

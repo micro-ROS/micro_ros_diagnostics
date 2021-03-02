@@ -24,7 +24,9 @@ rcl_ret_t
 my_diagnostic_task(diagnostic_value_t * kv)
 {
   // actual diagnostic task to be implemented
-  rclc_diagnostic_value_set_level(kv, micro_ros_diagnostic_msgs__msg__MicroROSDiagnosticStatus__STALE);
+  rclc_diagnostic_value_set_level(
+    kv,
+    micro_ros_diagnostic_msgs__msg__MicroROSDiagnosticStatus__STALE);
 
   return RCL_RET_OK;
 }

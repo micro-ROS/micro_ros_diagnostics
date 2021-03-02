@@ -50,7 +50,7 @@ rcl_ret_t
 rclc_diagnostic_task_init(
   diagnostic_task_t * task,
   const unsigned int id,
-  rcl_ret_t (*function)(diagnostic_value_t*))
+  rcl_ret_t (* function)(diagnostic_value_t *))
 {
   RCL_CHECK_FOR_NULL_WITH_MSG(
     task, "task is a null pointer", return RCL_RET_INVALID_ARGUMENT);
@@ -173,13 +173,13 @@ rclc_diagnostic_updater_update(
     rcl_ret_t task_ok = rclc_diagnostic_call_task(updater->tasks[i]);
 
     if (task_ok == RCL_RET_OK) {
-      diag_msg.key    = updater->tasks[i]->id;
-      diag_msg.value_type   = updater->tasks[i]->value.value_type;
-      diag_msg.bool_value    = updater->tasks[i]->value.bool_value;
-      diag_msg.int_value     = updater->tasks[i]->value.int_value;
-      diag_msg.double_value  = updater->tasks[i]->value.double_value;
-      diag_msg.value_id     = updater->tasks[i]->value.value_id;
-      diag_msg.level  = updater->tasks[i]->value.level;
+      diag_msg.key = updater->tasks[i]->id;
+      diag_msg.value_type = updater->tasks[i]->value.value_type;
+      diag_msg.bool_value = updater->tasks[i]->value.bool_value;
+      diag_msg.int_value = updater->tasks[i]->value.int_value;
+      diag_msg.double_value = updater->tasks[i]->value.double_value;
+      diag_msg.value_id = updater->tasks[i]->value.value_id;
+      diag_msg.level = updater->tasks[i]->value.level;
 
       rcl_ret_t rc = rcl_publish(&updater->diag_pub, &diag_msg, NULL);
       if (rc == RCL_RET_OK) {
@@ -190,9 +190,9 @@ rclc_diagnostic_updater_update(
       }
     } else {
       RCUTILS_LOG_ERROR(
-          "Updater '%d' could not update diagnostic task '%d'.",
-          updater->id,
-          updater->tasks[i]->id);
+        "Updater '%d' could not update diagnostic task '%d'.",
+        updater->id,
+        updater->tasks[i]->id);
     }
   }
 

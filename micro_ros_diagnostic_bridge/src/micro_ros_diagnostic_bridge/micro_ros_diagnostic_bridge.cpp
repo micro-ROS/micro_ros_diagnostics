@@ -1,4 +1,4 @@
-// Copyright (c) 2018 - for information on the respective copyright owner
+// Copyright (c) 2021 - for information on the respective copyright owner
 // see the NOTICE file and/or the repository https://github.com/microros/system_modes
 //
 // Licensed under the Apache License, Version 2.0 (the "License");
@@ -13,6 +13,10 @@
 // See the License for the specific language governing permissions and
 // limitations under the License.
 #include "micro_ros_diagnostic_bridge/micro_ros_diagnostic_bridge.hpp"
+
+#include <string>
+#include <memory>
+#include <utility>
 
 #include <rcl/error_handling.h>
 
@@ -72,17 +76,17 @@ MicroROSDiagnosticBridge::MicroROSDiagnosticBridge()
       ros2_pub_->publish(std::move(msg_out_));
     };
 
-    // Create a subscription to the topic which can be matched with one or more compatible ROS
-    // publishers.
-    // Note that not all publishers on the same topic with the same type will be compatible:
-    // they must have compatible Quality of Service policies.
-    uros_sub_ = create_subscription<MicroROSDiagnosticStatus>(
-        UROS_DIAGNOSTICS_BRIDGE_TOPIC_IN,
-        rclcpp::SystemDefaultsQoS(),
-        callback);
-    ros2_pub_ = this->create_publisher<DiagnosticStatus>(
-      UROS_DIAGNOSTICS_BRIDGE_TOPIC_OUT,
-      rclcpp::SystemDefaultsQoS());
+  // Create a subscription to the topic which can be matched with one or more compatible ROS
+  // publishers.
+  // Note that not all publishers on the same topic with the same type will be compatible:
+  // they must have compatible Quality of Service policies.
+  uros_sub_ = create_subscription<MicroROSDiagnosticStatus>(
+    UROS_DIAGNOSTICS_BRIDGE_TOPIC_IN,
+    rclcpp::SystemDefaultsQoS(),
+    callback);
+  ros2_pub_ = this->create_publisher<DiagnosticStatus>(
+    UROS_DIAGNOSTICS_BRIDGE_TOPIC_OUT,
+    rclcpp::SystemDefaultsQoS());
 }
 
 const std::string
@@ -95,7 +99,7 @@ MicroROSDiagnosticBridge::lookup_key(
   } catch (std::out_of_range & e) {
     RCLCPP_ERROR(
       this->get_logger(),
-      "Trying to bridge diagnostic message with updater %d and key %d, but couldn't find key in lookup table.",
+      "Message with updater %d and key %d, not found in lookup table.",
       updater_id, key);
     return "NOTFOUND";
   }
@@ -112,7 +116,7 @@ MicroROSDiagnosticBridge::lookup_value(
   } catch (std::out_of_range & e) {
     RCLCPP_ERROR(
       this->get_logger(),
-      "Trying to bridge diagnostic message with updater %d, key %d, and value id %d, but couldn't find keys in lookup table.",
+      "Message with updater %d, key %d, and value id %d, not found in lookup table.",
       updater_id, key, value_id);
     return "NOTFOUND";
   }
@@ -126,7 +130,7 @@ MicroROSDiagnosticBridge::lookup_hardware(unsigned int hardware_id)
   } catch (std::out_of_range & e) {
     RCLCPP_ERROR(
       this->get_logger(),
-      "Trying to bridge diagnostic message with hardware_id %d, but couldn't find ID in lookup table.",
+      "Message with hardware_id %d, not found in lookup table.",
       hardware_id);
     return "NOTFOUND";
   }
@@ -140,7 +144,7 @@ MicroROSDiagnosticBridge::lookup_updater(unsigned int updater_id)
   } catch (std::out_of_range & e) {
     RCLCPP_ERROR(
       this->get_logger(),
-      "Trying to bridge diagnostic message with updater_id %d, but couldn't find ID in lookup table.",
+      "Message with updater_id %d, not found in lookup table.",
       updater_id);
     return std::make_pair("NOTFOUND", "NOTFOUND");
   }
@@ -151,7 +155,8 @@ MicroROSDiagnosticBridge::read_lookup_table(const std::string & path)
 {
   rcl_params_t * yaml_params = rcl_yaml_node_struct_init(rcl_get_default_allocator());
   if (!rcl_parse_yaml_file(path.c_str(), yaml_params)) {
-    throw std::runtime_error("Failed to parse parameters " + path + ". " + rcl_get_error_string().str);
+    throw std::runtime_error(
+            "Failed to parse parameters " + path + ". " + rcl_get_error_string().str);
   }
 
   rclcpp::ParameterMap param_map = rclcpp::parameter_map_from(yaml_params);
@@ -199,7 +204,8 @@ MicroROSDiagnosticBridge::read_lookup_table(const std::string & path)
           auto start = updater_key.length() + key.length() + 14;
           pos = p.get_name().find('.', start);
           auto value = std::stoi(p.get_name().substr(start, pos - start));
-          value_map_[std::make_tuple(std::stoi(updater_key), std::stoi(key), value)] = p.value_to_string();
+          value_map_[std::make_tuple(std::stoi(updater_key), std::stoi(key), value)] =
+            p.value_to_string();
         }
       }
     }
@@ -209,7 +215,7 @@ MicroROSDiagnosticBridge::read_lookup_table(const std::string & path)
   RCLCPP_INFO(get_logger(), "Lookup table:");
   RCLCPP_INFO(get_logger(), " Found %lu hardware keys.", hardware_map_.size());
   RCLCPP_INFO(get_logger(), " Found %lu updaters.", updater_map_.size());
-  for (auto const& k : updater_map_) {
+  for (auto const & k : updater_map_) {
     RCLCPP_DEBUG(
       get_logger(), "  Updater %d : %s(%s)",
       k.first, k.second.first.c_str(), k.second.second.c_str());
@@ -217,7 +223,7 @@ MicroROSDiagnosticBridge::read_lookup_table(const std::string & path)
   RCLCPP_INFO(
     get_logger(), " Found %lu diagnostic keys with %lu diagnostic values.",
     key_map_.size(), value_map_.size());
-  for (auto const& k : value_map_) {
+  for (auto const & k : value_map_) {
     RCLCPP_DEBUG(
       get_logger(), "  Value %d,%d,%d : %s",
       std::get<0>(k.first), std::get<1>(k.first), std::get<2>(k.first),

@@ -1,4 +1,4 @@
-# Copyright (c) 2019 - for information on the respective copyright owner
+# Copyright (c) 2021 - for information on the respective copyright owner
 # see the NOTICE file and/or the repository https://github.com/micro-ROS/system_modes.
 #
 # Licensed under the Apache License, Version 2.0 (the "License");
@@ -15,7 +15,7 @@
 
 import launch
 import launch.actions
-import launch.substitutions
+from launch.substitutions import LaunchConfiguration
 
 import launch_ros.actions
 
@@ -28,5 +28,5 @@ def generate_launch_description():
         launch_ros.actions.Node(
             package='micro_ros_diagnostic_bridge',
             executable='diagnostic_bridge',
-            parameters=[{'lookup_table': launch.substitutions.LaunchConfiguration('lookup_table')}],
+            parameters=[{'lookup_table': LaunchConfiguration('lookup_table')}],
             output='screen')])

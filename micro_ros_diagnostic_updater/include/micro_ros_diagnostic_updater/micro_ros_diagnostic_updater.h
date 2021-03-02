@@ -37,7 +37,7 @@ typedef struct diagnostic_task_t
 {
   unsigned int id;
   diagnostic_value_t value;
-  rcl_ret_t (*function)(diagnostic_value_t*);
+  rcl_ret_t (* function)(diagnostic_value_t *);
 } diagnostic_task_t;
 
 typedef struct diagnostic_updater_t
@@ -69,7 +69,7 @@ rcl_ret_t
 rclc_diagnostic_task_init(
   diagnostic_task_t * task,
   const unsigned int id,
-  rcl_ret_t (*function)(diagnostic_value_t*));
+  rcl_ret_t (* function)(diagnostic_value_t *));
 
 rcl_ret_t
 rclc_diagnostic_updater_init(

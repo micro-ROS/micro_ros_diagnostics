@@ -33,13 +33,19 @@ my_diagnostic_website_check(diagnostic_value_t * kv)
   }
   if (my_diagnostic_status % 13 == 0) {
     my_website_status = 404;
-    rclc_diagnostic_value_set_level(kv, 1);
+    rclc_diagnostic_value_set_level(
+      kv,
+      micro_ros_diagnostic_msgs__msg__MicroROSDiagnosticStatus__WARN);
   } else if (my_diagnostic_status % 17 == 0) {
     my_website_status = 500;
-    rclc_diagnostic_value_set_level(kv, 2);
+    rclc_diagnostic_value_set_level(
+      kv,
+      micro_ros_diagnostic_msgs__msg__MicroROSDiagnosticStatus__ERROR);
   } else {
     my_website_status = 200;
-    rclc_diagnostic_value_set_level(kv, micro_ros_diagnostic_msgs__msg__MicroROSDiagnosticStatus__OK);
+    rclc_diagnostic_value_set_level(
+      kv,
+      micro_ros_diagnostic_msgs__msg__MicroROSDiagnosticStatus__OK);
   }
   rclc_diagnostic_value_lookup(kv, my_website_status);
 
