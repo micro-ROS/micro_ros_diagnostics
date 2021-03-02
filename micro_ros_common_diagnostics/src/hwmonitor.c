@@ -16,21 +16,17 @@
 #include <stdio.h>
 #include <unistd.h>
 
-#include <rcl/rcl.h>
-#include <micro_ros_diagnostic_updater/micro_ros_diagnostic_updater.h>
+#include <rclc/executor.h>
 
-static const char * UPDATER_NAME = "Name of the updater";
-static const char * UPDATER_DESC = "Description of the updater";
-static const char * UPDATER_HW_ID = "Updater Hardware ID";
-static const char * TASK_NAME = "Name of the diagnostic task";
+#include "micro_ros_diagnostic_updater/micro_ros_diagnostic_updater.h"
 
-const char * my_diagnostic_function()
+rcl_ret_t
+my_diagnostic_task(diagnostic_value_t * kv)
 {
-  static char dvalue[20] = "to be implemented";
+  // actual diagnostic task to be implemented
+  rclc_diagnostic_value_set_level(kv, micro_ros_diagnostic_msgs__msg__MicroROSDiagnosticStatus__STALE);
 
-  // Diagnostics goes here, e.g., sensor readings
-
-  return dvalue;
+  return RCL_RET_OK;
 }
 
 int main(int argc, const char * argv[])
@@ -55,11 +51,11 @@ int main(int argc, const char * argv[])
   }
 
   // create rcl_node
-  rcl_node_t my_node = rcl_get_zero_initialized_node();
+  rcl_node_t updater_node = rcl_get_zero_initialized_node();
   rcl_node_options_t node_ops = rcl_node_get_default_options();
   rc = rcl_node_init(
-    &my_node,
-    UPDATER_NAME,
+    &updater_node,
+    "hwmonitor",
     "",
     &context,
     &node_ops);
@@ -70,43 +66,44 @@ int main(int argc, const char * argv[])
 
   // updater
   diagnostic_updater_t updater;
-  rc = rclc_diagnostic_updater_init(
-    &updater,
-    &my_node,
-    UPDATER_NAME,
-    UPDATER_DESC,
-    UPDATER_HW_ID);
+  rc = rclc_diagnostic_updater_init(&updater, &updater_node, 17, 42);
   if (rc != RCL_RET_OK) {
     printf("Error in creating diagnostic updater\n");
     return -1;
   }
-
   diagnostic_task_t task;
   rc = rclc_diagnostic_task_init(
-    &task,
-    TASK_NAME,
-    &my_diagnostic_function);
+    &task, 0,
+    &my_diagnostic_task);
   if (rc != RCL_RET_OK) {
     printf("Error in creating diagnostic task\n");
     return -1;
   }
 
+  // adding tasks
   rc = rclc_diagnostic_updater_add_task(
     &updater,
     &task);
   if (rc != RCL_RET_OK) {
-    printf("Error in adding diagnostic task\n");
+    printf("Error in adding diagnostic diagnostic task\n");
     return -1;
   }
 
-  while (RCL_RET_OK) {
+  for (unsigned int i = 0; i < 100; ++i) {
+    printf("Publishing processor diagnostics\n");
     rc = rclc_diagnostic_updater_update(&updater);
+    if (rc != RCL_RET_OK) {
+      printf("Error in publishing processor diagnostics\n");
+      return -1;
+    }
     sleep(1);
   }
 
+  rclc_diagnostic_updater_fini(&updater, &updater_node);
   if (rc != RCL_RET_OK) {
     printf("Error while cleaning up!\n");
     return -1;
   }
-  return RCL_RET_OK;
+
+  return 0;
 }
