@@ -1,10 +1,10 @@
 General information about this repository, including legal information, build instructions and known issues/limitations, can be found in the [README](../README.md) of the repository root.
 
-# The micro-ROS diagnostic updater package
+# The micro-ROS diagnostic bridge package
 
-micro-ROS diagnostic updater is a [ROS 2](http://www.ros2.org/) package that provides convenience functions to implement diagnostic tasks amd updaters based on the ROS Client C-Library (RCLC) for micro-ROS.
+micro-ROS diagnostic bridge is a [ROS 2](http://www.ros2.org/) package that provides a bridge to translate micro-ROS diagnostic messages to vanilla ROS 2 diagnostic messages based on a lookup table.
 
-An exemplary implementation can be found in: [example/example_updater.c](example_updater.c)
+An exemplary lookup table can be found in: [example_table.yaml](example_table.yaml)
 
 ## Purpose of the Project
 
@@ -17,8 +17,8 @@ standards, e.g., ISO 26262.
 
 ## How to Build, Test, Install, and Use
 
-After you cloned this repository into your ROS 2 workspace folder, you may build and install it using colcon:  
-$ `colcon build --packages-select micro_ros_diagnostic_updater`
+After you cloned this repository into your ROS 2 workspace folder, you may build and install it using colcon:
+$ `colcon build --packages-select micro_ros_diagnostic_bridge`
 
 ## License
 
