@@ -22,42 +22,61 @@
 
 #define MICRO_ROS_UPDATER_MAX_NUMBER_OF_TASKS 5
 
-typedef struct diagnostic_key_value_t
+typedef struct diagnostic_value_t
 {
-  const char * key;
-  const char * value;
-} diagnostic_key_value_t;
+  unsigned int value_type;
+  bool bool_value;
+  int int_value;
+  double double_value;
+  unsigned int value_id;
+
+  unsigned int level;
+} diagnostic_value_t;
 
 typedef struct diagnostic_task_t
 {
-  const char * name;
-  const char * (*function)(void);
+  unsigned int id;
+  diagnostic_value_t value;
+  rcl_ret_t (*function)(diagnostic_value_t*);
 } diagnostic_task_t;
 
 typedef struct diagnostic_updater_t
 {
-  const char * name;
-  const char * message;
-  const char * hardware_id;
-  int num_tasks;
+  unsigned int id;
+  unsigned int hardware_id;
+  unsigned int num_tasks;
   diagnostic_task_t * tasks[MICRO_ROS_UPDATER_MAX_NUMBER_OF_TASKS];
   rcl_publisher_t diag_pub;
   micro_ros_diagnostic_msgs__msg__MicroROSDiagnosticStatus diag_status;
 } diagnostic_updater_t;
 
+void
+rclc_diagnostic_value_set_int(
+  diagnostic_value_t * kv,
+  const int value);
+
+void
+rclc_diagnostic_value_lookup(
+  diagnostic_value_t * kv,
+  const unsigned int value_id);
+
+void
+rclc_diagnostic_value_set_level(
+  diagnostic_value_t * kv,
+  const unsigned int level);
+
 rcl_ret_t
 rclc_diagnostic_task_init(
   diagnostic_task_t * task,
-  const char * name,
-  const char * (*function)(void));
+  const unsigned int id,
+  rcl_ret_t (*function)(diagnostic_value_t*));
 
 rcl_ret_t
 rclc_diagnostic_updater_init(
   diagnostic_updater_t * updater,
   const rcl_node_t * node,
-  const char * name,
-  const char * message,
-  const char * hardware_id);
+  const unsigned int id,
+  const unsigned int hardware_id);
 
 rcl_ret_t
 rclc_diagnostic_updater_fini(
@@ -69,7 +88,7 @@ rclc_diagnostic_updater_add_task(
   diagnostic_updater_t * updater,
   diagnostic_task_t * task);
 
-const char *
+rcl_ret_t
 rclc_diagnostic_call_task(
   diagnostic_task_t * task);
 

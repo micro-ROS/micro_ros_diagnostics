@@ -17,21 +17,47 @@
 #include <rcutils/logging_macros.h>
 
 #include <micro_ros_diagnostic_updater/micro_ros_diagnostic_updater.h>
+#include <micro_ros_diagnostic_msgs/msg/micro_ros_diagnostic_status.h>
+
+
+void
+rclc_diagnostic_value_set_int(
+  diagnostic_value_t * kv,
+  const int value)
+{
+  kv->value_type = micro_ros_diagnostic_msgs__msg__MicroROSDiagnosticStatus__VALUE_INT;
+  kv->int_value = value;
+}
+
+void
+rclc_diagnostic_value_lookup(
+  diagnostic_value_t * kv,
+  const unsigned int value_id)
+{
+  kv->value_type = micro_ros_diagnostic_msgs__msg__MicroROSDiagnosticStatus__VALUE_LOOKUP;
+  kv->value_id = value_id;
+}
+
+void
+rclc_diagnostic_value_set_level(
+  diagnostic_value_t * kv,
+  const unsigned int level)
+{
+  kv->level = level;
+}
 
 rcl_ret_t
 rclc_diagnostic_task_init(
   diagnostic_task_t * task,
-  const char * name,
-  const char * (*function)(void))
+  const unsigned int id,
+  rcl_ret_t (*function)(diagnostic_value_t*))
 {
   RCL_CHECK_FOR_NULL_WITH_MSG(
     task, "task is a null pointer", return RCL_RET_INVALID_ARGUMENT);
   RCL_CHECK_FOR_NULL_WITH_MSG(
-    name, "name is a null pointer", return RCL_RET_INVALID_ARGUMENT);
-  RCL_CHECK_FOR_NULL_WITH_MSG(
     function, "function is a null pointer", return RCL_RET_INVALID_ARGUMENT);
 
-  task->name = name;
+  task->id = id;
   task->function = function;
 
   return RCL_RET_OK;
@@ -41,29 +67,21 @@ rcl_ret_t
 rclc_diagnostic_updater_init(
   diagnostic_updater_t * updater,
   const rcl_node_t * node,
-  const char * name,
-  const char * message,
-  const char * hardware_id)
+  const unsigned int id,
+  const unsigned int hardware_id)
 {
   RCL_CHECK_FOR_NULL_WITH_MSG(
     updater, "updater is a null pointer", return RCL_RET_INVALID_ARGUMENT);
   RCL_CHECK_FOR_NULL_WITH_MSG(
     node, "node is a null pointer", return RCL_RET_INVALID_ARGUMENT);
-  RCL_CHECK_FOR_NULL_WITH_MSG(
-    name, "name is a null pointer", return RCL_RET_INVALID_ARGUMENT);
-  RCL_CHECK_FOR_NULL_WITH_MSG(
-    message, "message is a null pointer", return RCL_RET_INVALID_ARGUMENT);
-  RCL_CHECK_FOR_NULL_WITH_MSG(
-    hardware_id, "hardware_id is a null pointer", return RCL_RET_INVALID_ARGUMENT);
 
-  updater->name = name;
-  updater->message = message;
+  updater->id = id;
   updater->hardware_id = hardware_id;
   updater->num_tasks = 0;
 
   // publisher
   updater->diag_pub = rcl_get_zero_initialized_publisher();
-  const char * topic_name = "diagnostics_uc";
+  const char * topic_name = "/diagnostics_uros";
   const rosidl_message_type_support_t * diag_type_support =
     ROSIDL_GET_MSG_TYPE_SUPPORT(
     micro_ros_diagnostic_msgs,
@@ -78,8 +96,8 @@ rclc_diagnostic_updater_init(
     &pub_options);
   if (RCL_RET_OK != rc) {
     RCUTILS_LOG_ERROR(
-      "Updater '%s' could not create publisher /%s.",
-      updater->name,
+      "Updater '%d' could not create publisher /%s.",
+      updater->id,
       topic_name);
     return RCL_RET_ERROR;
   }
@@ -98,8 +116,8 @@ rclc_diagnostic_updater_fini(
   rcl_ret_t rc = rcl_publisher_fini(&updater->diag_pub, node);
   if (RCL_RET_OK != rc) {
     RCUTILS_LOG_ERROR(
-      "Error when cleaning '%s'. Could not delete publisher.",
-      updater->name);
+      "Error when cleaning updater %d. Could not delete publisher.",
+      updater->id);
     return RCL_RET_ERROR;
   }
 
@@ -118,9 +136,9 @@ rclc_diagnostic_updater_add_task(
 
   if (updater->num_tasks >= MICRO_ROS_UPDATER_MAX_NUMBER_OF_TASKS) {
     RCUTILS_LOG_ERROR(
-      "Updater '%s' could not add task '%s', already %d tasks added.",
-      updater->name,
-      task->name,
+      "Updater %d could not add task %d, already %d tasks added.",
+      updater->id,
+      task->id,
       MICRO_ROS_UPDATER_MAX_NUMBER_OF_TASKS);
     return RCL_RET_ERROR;
   }
@@ -130,11 +148,11 @@ rclc_diagnostic_updater_add_task(
   return RCL_RET_OK;
 }
 
-const char *
+rcl_ret_t
 rclc_diagnostic_call_task(
   diagnostic_task_t * task)
 {
-  return (task->function)();
+  return (task->function)(&task->value);
 }
 
 rcl_ret_t
@@ -147,62 +165,34 @@ rclc_diagnostic_updater_update(
   micro_ros_diagnostic_msgs__msg__MicroROSDiagnosticStatus diag_msg;
   micro_ros_diagnostic_msgs__msg__MicroROSDiagnosticStatus__init(&diag_msg);
 
-  const int STRSIZE = 99;
-
   // name
-  diag_msg.name.data = malloc(STRSIZE);
-  diag_msg.name.capacity = STRSIZE;
-  diag_msg.name.size = snprintf(
-    diag_msg.name.data,
-    diag_msg.name.capacity,
-    "%s",
-    updater->name);
+  diag_msg.updater_id = updater->id;
+  diag_msg.hardware_id = updater->hardware_id;
 
-  // message
-  diag_msg.message.data = malloc(STRSIZE);
-  diag_msg.message.capacity = STRSIZE;
-  diag_msg.message.size = snprintf(
-    diag_msg.message.data,
-    diag_msg.message.capacity,
-    "%s",
-    updater->message);
+  for (unsigned int i = 0; i < updater->num_tasks; ++i) {
+    rcl_ret_t task_ok = rclc_diagnostic_call_task(updater->tasks[i]);
 
-  // hardware id
-  diag_msg.hardware_id.data = malloc(STRSIZE);
-  diag_msg.hardware_id.capacity = STRSIZE;
-  diag_msg.hardware_id.size = snprintf(
-    diag_msg.hardware_id.data,
-    diag_msg.hardware_id.capacity,
-    "%s",
-    updater->hardware_id);
+    if (task_ok == RCL_RET_OK) {
+      diag_msg.key    = updater->tasks[i]->id;
+      diag_msg.value_type   = updater->tasks[i]->value.value_type;
+      diag_msg.bool_value    = updater->tasks[i]->value.bool_value;
+      diag_msg.int_value     = updater->tasks[i]->value.int_value;
+      diag_msg.double_value  = updater->tasks[i]->value.double_value;
+      diag_msg.value_id     = updater->tasks[i]->value.value_id;
+      diag_msg.level  = updater->tasks[i]->value.level;
 
-  for (int i = 0; i < updater->num_tasks; ++i) {
-    diag_msg.level = 0;
-
-    diag_msg.key.data = malloc(STRSIZE);
-    diag_msg.key.capacity = STRSIZE;
-    diag_msg.key.size = snprintf(
-      diag_msg.key.data,
-      diag_msg.key.capacity,
-      "%s",
-      updater->tasks[i]->name);
-
-    diag_msg.value.data = malloc(STRSIZE);
-    diag_msg.value.capacity = STRSIZE;
-    diag_msg.value.size = snprintf(
-      diag_msg.value.data,
-      diag_msg.value.capacity,
-      "%s",
-      rclc_diagnostic_call_task(updater->tasks[i]));
-
-    rcl_ret_t rc = rcl_publish(&updater->diag_pub, &diag_msg, NULL);
-
-    if (rc == RCL_RET_OK) {
-      RCUTILS_LOG_DEBUG(
-        "Updater '%s' published '%s':'%s'.",
-        updater->name,
-        diag_msg.key.data,
-        diag_msg.value.data);
+      rcl_ret_t rc = rcl_publish(&updater->diag_pub, &diag_msg, NULL);
+      if (rc == RCL_RET_OK) {
+        RCUTILS_LOG_DEBUG(
+          "Updater '%d' published value for '%d'.",
+          updater->id,
+          updater->tasks[i]->id);
+      }
+    } else {
+      RCUTILS_LOG_ERROR(
+          "Updater '%d' could not update diagnostic task '%d'.",
+          updater->id,
+          updater->tasks[i]->id);
     }
   }
 
