@@ -57,7 +57,7 @@ TEST(TestDiagnosticUpdater, create_updater) {
   rc = rclc_support_init(&support, 0, nullptr, &allocator);
   const char * my_name = "test_updater_node";
   const char * my_namespace = "";
-  rcl_node_t node = rcl_get_zero_initialized_node();
+  rcl_node_t node;
   rc = rclc_node_init_default(&node, my_name, my_namespace, &support);
 
   // updater
