@@ -22,15 +22,15 @@ byte VALUE_LOOKUP=10
 byte level
 
 # A description of the test/component reporting.
-uint8 updater_id
+uint16 updater_id
 # A hardware unique string.
-uint8 hardware_id
+uint16 hardware_id
 
 # What key, value is transmitted.
-uint8 key
+uint16 key
 
 byte value_type
 bool bool_value
 int64 int_value
 float64 double_value
-int64 value_id
+uint16 value_id

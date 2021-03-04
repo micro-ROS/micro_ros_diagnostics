@@ -23,7 +23,7 @@
 void
 rclc_diagnostic_value_set_int(
   diagnostic_value_t * kv,
-  const int value)
+  int64_t value)
 {
   kv->value_type = micro_ros_diagnostic_msgs__msg__MicroROSDiagnosticStatus__VALUE_INT;
   kv->int_value = value;
@@ -32,7 +32,7 @@ rclc_diagnostic_value_set_int(
 void
 rclc_diagnostic_value_lookup(
   diagnostic_value_t * kv,
-  const unsigned int value_id)
+  uint16_t value_id)
 {
   kv->value_type = micro_ros_diagnostic_msgs__msg__MicroROSDiagnosticStatus__VALUE_LOOKUP;
   kv->value_id = value_id;
@@ -41,7 +41,7 @@ rclc_diagnostic_value_lookup(
 void
 rclc_diagnostic_value_set_level(
   diagnostic_value_t * kv,
-  const unsigned int level)
+  uint8_t level)
 {
   kv->level = level;
 }
@@ -49,7 +49,7 @@ rclc_diagnostic_value_set_level(
 rcl_ret_t
 rclc_diagnostic_task_init(
   diagnostic_task_t * task,
-  const unsigned int id,
+  uint16_t key,
   rcl_ret_t (* function)(diagnostic_value_t *))
 {
   RCL_CHECK_FOR_NULL_WITH_MSG(
@@ -57,7 +57,7 @@ rclc_diagnostic_task_init(
   RCL_CHECK_FOR_NULL_WITH_MSG(
     function, "function is a null pointer", return RCL_RET_INVALID_ARGUMENT);
 
-  task->id = id;
+  task->id = key;
   task->function = function;
 
   return RCL_RET_OK;
@@ -67,8 +67,8 @@ rcl_ret_t
 rclc_diagnostic_updater_init(
   diagnostic_updater_t * updater,
   const rcl_node_t * node,
-  const unsigned int id,
-  const unsigned int hardware_id)
+  uint16_t id,
+  uint16_t hardware_id)
 {
   RCL_CHECK_FOR_NULL_WITH_MSG(
     updater, "updater is a null pointer", return RCL_RET_INVALID_ARGUMENT);
