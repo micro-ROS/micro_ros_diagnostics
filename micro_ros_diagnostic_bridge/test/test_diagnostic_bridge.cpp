@@ -12,13 +12,13 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#include <rclcpp/rclcpp.hpp>
-
-#include <string>
-#include <gtest/gtest.h>
-
-#include "micro_ros_diagnostic_bridge/lookup_tables.h"
 #include "micro_ros_diagnostic_bridge/micro_ros_diagnostic_bridge.hpp"
+#include "micro_ros_diagnostic_bridge/lookup_tables.h"
+
+#include <gtest/gtest.h>
+#include <rclcpp/rclcpp.hpp>
+#include <string>
+
 
 using std::string;
 
@@ -60,18 +60,18 @@ TEST_F(TestDiagnosticBridge, translating) {
   EXPECT_EQ("NOTFOUND", bridge->lookup_hardware(23));
 
   // Updater
-  EXPECT_EQ("google.com checker", bridge->lookup_updater(0).first);
+  EXPECT_EQ("google.com checker", bridge->lookup_updater(0).name);
   EXPECT_EQ(
     "Periodically checks the website google.com for availability.",
-    bridge->lookup_updater(0).second);
-  EXPECT_EQ("Processor info", bridge->lookup_updater(17).first);
+    bridge->lookup_updater(0).description);
+  EXPECT_EQ("Processor info", bridge->lookup_updater(17).name);
   EXPECT_EQ(
     "Measuring processor temperature and load.",
-    bridge->lookup_updater(17).second);
+    bridge->lookup_updater(17).description);
 
   EXPECT_NO_THROW(bridge->lookup_updater(23)) << "should be rclcpp error log";
-  EXPECT_EQ("NOTFOUND", bridge->lookup_updater(23).first);
-  EXPECT_EQ("NOTFOUND", bridge->lookup_updater(23).second);
+  EXPECT_EQ("NOTFOUND", bridge->lookup_updater(23).name);
+  EXPECT_EQ("NOTFOUND", bridge->lookup_updater(23).description);
 
   // Keys
   EXPECT_EQ("return code", bridge->lookup_key(0, 23));

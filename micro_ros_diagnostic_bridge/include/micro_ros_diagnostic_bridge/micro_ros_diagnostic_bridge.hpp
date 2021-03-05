@@ -14,11 +14,12 @@
 // limitations under the License.
 #pragma once
 
-#include <utility>
-#include <tuple>
-#include <string>
+#include <climits>
 #include <map>
 #include <memory>
+#include <string>
+#include <tuple>
+#include <utility>
 
 #include "rclcpp/rclcpp.hpp"
 
@@ -32,13 +33,39 @@ static const char UROS_DIAGNOSTICS_BRIDGE_TOPIC_OUT[] = "/diagnostics";
 namespace uros_diagnostic_msg = micro_ros_diagnostic_msgs::msg;
 namespace diagnostic_msg = diagnostic_msgs::msg;
 
-typedef std::pair<unsigned int, unsigned int> DiagnosticKey;
-typedef std::tuple<unsigned int, unsigned int, unsigned int> ValueLookup;
+struct MicroROSDiagnosticUpdater
+{
+  std::string name;
+  std::string description;
+};
+
+struct MicroROSDiagnosticKey
+{
+  unsigned int updater_id;
+  unsigned int key_id;
+
+  bool operator<(const MicroROSDiagnosticKey & rhs) const
+  {
+    return (updater_id * UINT_MAX + key_id) < (rhs.updater_id * UINT_MAX + rhs.key_id);
+  }
+};
+
+struct MicroROSDiagnosticValue
+{
+  MicroROSDiagnosticKey task;
+  unsigned int value_id;
+
+  bool operator<(const MicroROSDiagnosticValue & rhs) const
+  {
+    return (task.updater_id * UINT_MAX * UINT_MAX + task.key_id * UINT_MAX + value_id) <
+           (rhs.task.updater_id * UINT_MAX * UINT_MAX + rhs.task.key_id * UINT_MAX + rhs.value_id);
+  }
+};
 
 typedef std::map<unsigned int, std::string> HardwareMap;
-typedef std::map<unsigned int, std::pair<std::string, std::string>> UpdaterMap;
-typedef std::map<DiagnosticKey, std::string> KeyMap;
-typedef std::map<ValueLookup, std::string> ValueMap;
+typedef std::map<unsigned int, MicroROSDiagnosticUpdater> UpdaterMap;
+typedef std::map<MicroROSDiagnosticKey, std::string> KeyMap;
+typedef std::map<MicroROSDiagnosticValue, std::string> ValueMap;
 
 class MicroROSDiagnosticBridge : public rclcpp::Node
 {
@@ -47,7 +74,7 @@ public:
 
   virtual const std::string lookup_hardware(
     unsigned int hardware_id);
-  virtual const std::pair<std::string, std::string> lookup_updater(
+  virtual const MicroROSDiagnosticUpdater lookup_updater(
     unsigned int updater_id);
   virtual const std::string lookup_key(
     unsigned int updater_id,

@@ -51,8 +51,8 @@ MicroROSDiagnosticBridge::MicroROSDiagnosticBridge(const std::string & path)
       auto updater = lookup_updater(msg_in->updater_id);
       auto hardware = lookup_hardware(msg_in->hardware_id);
       msg_out_->hardware_id = hardware;
-      msg_out_->name = updater.first;
-      msg_out_->message = updater.second;
+      msg_out_->name = updater.name;
+      msg_out_->message = updater.description;
       msg_out_->level = msg_in->level;
 
       diagnostic_msgs::msg::KeyValue keyvalue;
@@ -91,7 +91,7 @@ MicroROSDiagnosticBridge::lookup_key(
   unsigned int key)
 {
   try {
-    return key_map_.at(std::make_pair(updater_id, key));
+    return key_map_.at({updater_id, key});
   } catch (std::out_of_range & e) {
     RCLCPP_ERROR(
       get_logger(),
@@ -108,7 +108,7 @@ MicroROSDiagnosticBridge::lookup_value(
   unsigned int value_id)
 {
   try {
-    return value_map_.at(std::make_tuple(updater_id, key, value_id));
+    return value_map_.at({{updater_id, key}, value_id});
   } catch (std::out_of_range & e) {
     RCLCPP_ERROR(
       get_logger(),
@@ -132,7 +132,7 @@ MicroROSDiagnosticBridge::lookup_hardware(unsigned int hardware_id)
   }
 }
 
-const std::pair<std::string, std::string>
+const MicroROSDiagnosticUpdater
 MicroROSDiagnosticBridge::lookup_updater(unsigned int updater_id)
 {
   try {
@@ -142,7 +142,7 @@ MicroROSDiagnosticBridge::lookup_updater(unsigned int updater_id)
       get_logger(),
       "Updater_id %d, not found in lookup table.",
       updater_id);
-    return std::make_pair("NOTFOUND", "NOTFOUND");
+    return {"NOTFOUND", "NOTFOUND"};
   }
 }
 
@@ -177,11 +177,11 @@ MicroROSDiagnosticBridge::read_lookup_table(const std::string & path)
         // Updater
         if (p.get_name().compare(updater_key + ".name") == 0) {
           updater_name = p.value_to_string();
-          updater_map_[std::stoi(updater_key)] = std::make_pair(updater_name, updater_descr);
+          updater_map_[std::stoi(updater_key)] = {updater_name, updater_descr};
         }
         if (p.get_name().compare(updater_key + ".description") == 0) {
           updater_descr = p.value_to_string();
-          updater_map_[std::stoi(updater_key)] = std::make_pair(updater_name, updater_descr);
+          updater_map_[std::stoi(updater_key)] = {updater_name, updater_descr};
         }
 
         // Keys
@@ -192,7 +192,7 @@ MicroROSDiagnosticBridge::read_lookup_table(const std::string & path)
         }
         if (p.get_name().compare(updater_key + ".keys." + key + ".name") == 0) {
           key_name = p.value_to_string();
-          key_map_[std::make_pair(std::stoi(updater_key), std::stoi(key))] = key_name;
+          key_map_[{std::stoi(updater_key), std::stoi(key)}] = key_name;
         }
 
         // Values lookup
@@ -200,7 +200,7 @@ MicroROSDiagnosticBridge::read_lookup_table(const std::string & path)
           auto start = updater_key.length() + key.length() + 14;
           pos = p.get_name().find('.', start);
           auto value = std::stoi(p.get_name().substr(start, pos - start));
-          value_map_[std::make_tuple(std::stoi(updater_key), std::stoi(key), value)] =
+          value_map_[{{std::stoi(updater_key), std::stoi(key)}, value}] =
             p.value_to_string();
         }
       }
@@ -211,18 +211,20 @@ MicroROSDiagnosticBridge::read_lookup_table(const std::string & path)
   RCLCPP_INFO(get_logger(), "Lookup table:");
   RCLCPP_INFO(get_logger(), " Found %lu hardware keys.", hardware_map_.size());
   RCLCPP_INFO(get_logger(), " Found %lu updaters.", updater_map_.size());
-  for (auto const & k : updater_map_) {
+  for (auto const & updater : updater_map_) {
     RCLCPP_DEBUG(
       get_logger(), "  Updater %d : %s(%s)",
-      k.first, k.second.first.c_str(), k.second.second.c_str());
+      updater.first, updater.second.name.c_str(), updater.second.description.c_str());
   }
   RCLCPP_INFO(
     get_logger(), " Found %lu diagnostic keys with %lu diagnostic values.",
     key_map_.size(), value_map_.size());
-  for (auto const & k : value_map_) {
+  for (auto const & value : value_map_) {
     RCLCPP_DEBUG(
       get_logger(), "  Value %d,%d,%d : %s",
-      std::get<0>(k.first), std::get<1>(k.first), std::get<2>(k.first),
-      k.second.c_str());
+      value.first.task.updater_id,
+      value.first.task.key_id,
+      value.first.value_id,
+      value.second.c_str());
   }
 }
