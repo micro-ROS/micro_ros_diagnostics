@@ -33,6 +33,23 @@ my_diagnostic_task(diagnostic_value_t * kv)
 
 int main(int argc, const char * argv[])
 {
+  uint16_t hardware_id = 0;
+  uint16_t updater_id = 0;
+  uint16_t task_id = 0;
+  if (argc < 2) {
+    printf("Need at least one argument: hardware ID. Optional: updater ID, task ID.\n");
+    exit(1);
+  } else {
+    hardware_id = atoi(argv[1]);
+  }
+  if (argc > 2) {
+    updater_id = atoi(argv[2]);
+  }
+  if (argc > 3) {
+    task_id = atoi(argv[3]);
+  }
+  printf("hwmonitor, hardware ID: %d, updater ID: %d.\n", hardware_id, updater_id);
+
   rcl_context_t context = rcl_get_zero_initialized_context();
   rcl_init_options_t init_options = rcl_get_zero_initialized_init_options();
   rcl_allocator_t allocator = rcl_get_default_allocator();
@@ -68,15 +85,13 @@ int main(int argc, const char * argv[])
 
   // updater
   diagnostic_updater_t updater;
-  rc = rclc_diagnostic_updater_init(&updater, &updater_node, 17, 42);
+  rc = rclc_diagnostic_updater_init(&updater, &updater_node, hardware_id, updater_id);
   if (rc != RCL_RET_OK) {
     printf("Error in creating diagnostic updater\n");
     return -1;
   }
   diagnostic_task_t task;
-  rc = rclc_diagnostic_task_init(
-    &task, 0,
-    &my_diagnostic_task);
+  rc = rclc_diagnostic_task_init(&task, task_id, &my_diagnostic_task);
   if (rc != RCL_RET_OK) {
     printf("Error in creating diagnostic task\n");
     return -1;
