@@ -72,14 +72,14 @@ class MicroROSDiagnosticBridge : public rclcpp::Node
 public:
   explicit MicroROSDiagnosticBridge(const std::string & path = "");
 
-  virtual const std::string lookup_hardware(
+  virtual std::string lookup_hardware(
     int hardware_id);
   virtual const MicroROSDiagnosticUpdater lookup_updater(
     int updater_id);
-  virtual const std::string lookup_key(
+  virtual std::string lookup_key(
     int updater_id,
     int key);
-  virtual const std::string lookup_value(
+  virtual std::string lookup_value(
     int updater_id,
     int key,
     int value_id);

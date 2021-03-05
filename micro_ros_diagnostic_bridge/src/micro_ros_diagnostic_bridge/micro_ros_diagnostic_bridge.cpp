@@ -86,7 +86,7 @@ MicroROSDiagnosticBridge::MicroROSDiagnosticBridge(const std::string & path)
     rclcpp::SystemDefaultsQoS());
 }
 
-const std::string
+std::string
 MicroROSDiagnosticBridge::lookup_key(
   int updater_id,
   int key)
@@ -102,7 +102,7 @@ MicroROSDiagnosticBridge::lookup_key(
   }
 }
 
-const std::string
+std::string
 MicroROSDiagnosticBridge::lookup_value(
   int updater_id,
   int key,
@@ -119,7 +119,7 @@ MicroROSDiagnosticBridge::lookup_value(
   }
 }
 
-const std::string
+std::string
 MicroROSDiagnosticBridge::lookup_hardware(int hardware_id)
 {
   try {
