@@ -43,6 +43,8 @@ TEST_F(TestDiagnosticBridge, parsing) {
     std::invalid_argument);
 
   EXPECT_NO_THROW(bridge = new MicroROSDiagnosticBridge(LOOKUP_TABLE_PATH));
+
+  (void) bridge;
 }
 
 /*

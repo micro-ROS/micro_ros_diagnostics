@@ -41,8 +41,8 @@ struct MicroROSDiagnosticUpdater
 
 struct MicroROSDiagnosticKey
 {
-  unsigned int updater_id;
-  unsigned int key_id;
+  int updater_id;
+  int key_id;
 
   bool operator<(const MicroROSDiagnosticKey & rhs) const
   {
@@ -53,7 +53,7 @@ struct MicroROSDiagnosticKey
 struct MicroROSDiagnosticValue
 {
   MicroROSDiagnosticKey task;
-  unsigned int value_id;
+  int value_id;
 
   bool operator<(const MicroROSDiagnosticValue & rhs) const
   {
@@ -62,8 +62,8 @@ struct MicroROSDiagnosticValue
   }
 };
 
-typedef std::map<unsigned int, std::string> HardwareMap;
-typedef std::map<unsigned int, MicroROSDiagnosticUpdater> UpdaterMap;
+typedef std::map<int, std::string> HardwareMap;
+typedef std::map<int, MicroROSDiagnosticUpdater> UpdaterMap;
 typedef std::map<MicroROSDiagnosticKey, std::string> KeyMap;
 typedef std::map<MicroROSDiagnosticValue, std::string> ValueMap;
 
@@ -73,16 +73,16 @@ public:
   explicit MicroROSDiagnosticBridge(const std::string & path = "");
 
   virtual const std::string lookup_hardware(
-    unsigned int hardware_id);
+    int hardware_id);
   virtual const MicroROSDiagnosticUpdater lookup_updater(
-    unsigned int updater_id);
+    int updater_id);
   virtual const std::string lookup_key(
-    unsigned int updater_id,
-    unsigned int key);
+    int updater_id,
+    int key);
   virtual const std::string lookup_value(
-    unsigned int updater_id,
-    unsigned int key,
-    unsigned int value_id);
+    int updater_id,
+    int key,
+    int value_id);
 
 protected:
   virtual void read_lookup_table(const std::string & path);

@@ -14,8 +14,9 @@
 // limitations under the License.
 #include "micro_ros_diagnostic_bridge/micro_ros_diagnostic_bridge.hpp"
 
-#include <string>
 #include <memory>
+#include <stdexcept>
+#include <string>
 #include <utility>
 
 #include <rcl/error_handling.h>
@@ -87,8 +88,8 @@ MicroROSDiagnosticBridge::MicroROSDiagnosticBridge(const std::string & path)
 
 const std::string
 MicroROSDiagnosticBridge::lookup_key(
-  unsigned int updater_id,
-  unsigned int key)
+  int updater_id,
+  int key)
 {
   try {
     return key_map_.at({updater_id, key});
@@ -103,9 +104,9 @@ MicroROSDiagnosticBridge::lookup_key(
 
 const std::string
 MicroROSDiagnosticBridge::lookup_value(
-  unsigned int updater_id,
-  unsigned int key,
-  unsigned int value_id)
+  int updater_id,
+  int key,
+  int value_id)
 {
   try {
     return value_map_.at({{updater_id, key}, value_id});
@@ -119,7 +120,7 @@ MicroROSDiagnosticBridge::lookup_value(
 }
 
 const std::string
-MicroROSDiagnosticBridge::lookup_hardware(unsigned int hardware_id)
+MicroROSDiagnosticBridge::lookup_hardware(int hardware_id)
 {
   try {
     return hardware_map_.at(hardware_id);
@@ -133,7 +134,7 @@ MicroROSDiagnosticBridge::lookup_hardware(unsigned int hardware_id)
 }
 
 const MicroROSDiagnosticUpdater
-MicroROSDiagnosticBridge::lookup_updater(unsigned int updater_id)
+MicroROSDiagnosticBridge::lookup_updater(int updater_id)
 {
   try {
     return updater_map_.at(updater_id);
@@ -199,8 +200,8 @@ MicroROSDiagnosticBridge::read_lookup_table(const std::string & path)
         if (p.get_name().rfind(updater_key + ".keys." + key + ".values") == 0) {
           auto start = updater_key.length() + key.length() + 14;
           pos = p.get_name().find('.', start);
-          auto value = std::stoi(p.get_name().substr(start, pos - start));
-          value_map_[{{std::stoi(updater_key), std::stoi(key)}, value}] =
+          auto value_id = std::stoi(p.get_name().substr(start, pos - start));
+          value_map_[{{std::stoi(updater_key), std::stoi(key)}, value_id}] =
             p.value_to_string();
         }
       }
