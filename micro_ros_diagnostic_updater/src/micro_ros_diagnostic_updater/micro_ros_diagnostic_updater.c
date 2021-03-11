@@ -23,7 +23,7 @@
 void
 rclc_diagnostic_value_set_int(
   diagnostic_value_t * kv,
-  int64_t value)
+  int32_t value)
 {
   kv->value_type = micro_ros_diagnostic_msgs__msg__MicroROSDiagnosticStatus__VALUE_INT;
   kv->int_value = value;

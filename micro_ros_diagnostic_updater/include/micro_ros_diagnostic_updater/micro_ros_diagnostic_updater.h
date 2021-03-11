@@ -53,7 +53,7 @@ typedef struct diagnostic_updater_t
 void
 rclc_diagnostic_value_set_int(
   diagnostic_value_t * kv,
-  int64_t value);
+  int32_t value);
 
 void
 rclc_diagnostic_value_lookup(

@@ -12,7 +12,7 @@ find_package(micro_ros_diagnostic_msgs REQUIRED)
 find_package(rclc REQUIRED)
 
 
-if("${rcl_lifecycle_VERSION}" VERSION_LESS "1.0.0")
+if("${rcl_VERSION}" VERSION_LESS "1.0.0")
   message(STATUS "Found rcl_lifecycle version ${rcl_lifecycle_VERSION}, which belongs to Eloquent or earlier")
   if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     add_compile_options(-Wall -Wextra)
