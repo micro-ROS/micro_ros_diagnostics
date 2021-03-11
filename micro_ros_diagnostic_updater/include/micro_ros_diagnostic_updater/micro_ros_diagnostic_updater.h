@@ -26,8 +26,8 @@ typedef struct diagnostic_value_t
 {
   int8_t value_type;
   bool bool_value;
-  int16_t int_value;
-  double double_value;
+  int32_t int_value;
+  float double_value;
   int16_t value_id;
 
   int8_t level;
