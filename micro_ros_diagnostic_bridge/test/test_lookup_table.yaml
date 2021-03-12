@@ -1,0 +1,29 @@
+# bridge lookup table
+---
+
+hardware_ids:
+  ros__parameters:
+    00: esp32_01
+    17: esp32_foo
+    42: esp32_bar
+
+updaters:
+  ros__parameters:
+    00:
+      name: "google.com checker"
+      description: "Periodically checks the website google.com for availability."
+      keys:
+        23:
+          name: "return code"
+          values:
+            200: "ok"
+            404: "not found"
+            500: "server error"
+    17:
+      name: "Processor info"
+      description: "Measuring processor temperature and load."
+      keys:
+        00:
+          name: "temp"
+        01:
+          name: "load"

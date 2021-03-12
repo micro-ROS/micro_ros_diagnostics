@@ -1,0 +1,17 @@
+# bridge lookup table
+---
+
+hardware_ids:
+  ros__parameters:
+    00: tbd
+
+updaters:
+  ros__parameters:
+    00:
+      name: "hw monitor"
+      description: "Common micro controller hardware diagnostics."
+      keys:
+        00:
+          name: "temp"
+        01:
+          name: "load"

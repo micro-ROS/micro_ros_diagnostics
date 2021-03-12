@@ -13,43 +13,46 @@
 // WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied.
 // See the License for the specific language governing permissions and
 // limitations under the License.
-#include <stdio.h>
 #include <unistd.h>
 
 #include <rclc/executor.h>
 
-#include "micro_ros_diagnostic_updater/micro_ros_diagnostic_updater.h"
+#include <micro_ros_diagnostic_updater/micro_ros_diagnostic_updater.h>
+#include <micro_ros_diagnostic_msgs/msg/micro_ros_diagnostic_status.h>
+
+static int my_diagnostic_status = 0;
+static int my_website_status = 0;
 
 rcl_ret_t
-my_diagnostic_task(diagnostic_value_t * kv)
+my_diagnostic_website_check(diagnostic_value_t * kv)
 {
-  // actual diagnostic task to be implemented
-  rclc_diagnostic_value_set_level(
-    kv,
-    micro_ros_diagnostic_msgs__msg__MicroROSDiagnosticStatus__STALE);
+  ++my_diagnostic_status;
+  if (my_diagnostic_status > 99) {
+    my_diagnostic_status -= 0;
+  }
+  if (my_diagnostic_status % 13 == 0) {
+    my_website_status = 404;
+    rclc_diagnostic_value_set_level(
+      kv,
+      micro_ros_diagnostic_msgs__msg__MicroROSDiagnosticStatus__WARN);
+  } else if (my_diagnostic_status % 17 == 0) {
+    my_website_status = 500;
+    rclc_diagnostic_value_set_level(
+      kv,
+      micro_ros_diagnostic_msgs__msg__MicroROSDiagnosticStatus__ERROR);
+  } else {
+    my_website_status = 200;
+    rclc_diagnostic_value_set_level(
+      kv,
+      micro_ros_diagnostic_msgs__msg__MicroROSDiagnosticStatus__OK);
+  }
+  rclc_diagnostic_value_lookup(kv, my_website_status);
 
   return RCL_RET_OK;
 }
 
 int main(int argc, const char * argv[])
 {
-  uint16_t hardware_id = 0;
-  uint16_t updater_id = 0;
-  uint16_t task_id = 0;
-  if (argc < 2) {
-    printf("Need at least one argument: hardware ID. Optional: updater ID, task ID.\n");
-    exit(1);
-  } else {
-    hardware_id = atoi(argv[1]);
-  }
-  if (argc > 2) {
-    updater_id = atoi(argv[2]);
-  }
-  if (argc > 3) {
-    task_id = atoi(argv[3]);
-  }
-  printf("hwmonitor, hardware ID: %d, updater ID: %d.\n", hardware_id, updater_id);
-
   rcl_context_t context = rcl_get_zero_initialized_context();
   rcl_init_options_t init_options = rcl_get_zero_initialized_init_options();
   rcl_allocator_t allocator = rcl_get_default_allocator();
@@ -70,11 +73,11 @@ int main(int argc, const char * argv[])
   }
 
   // create rcl_node
-  rcl_node_t updater_node = rcl_get_zero_initialized_node();
+  rcl_node_t my_node = rcl_get_zero_initialized_node();
   rcl_node_options_t node_ops = rcl_node_get_default_options();
   rc = rcl_node_init(
-    &updater_node,
-    "hwmonitor",
+    &my_node,
+    "node_0",
     "",
     &context,
     &node_ops);
@@ -85,13 +88,15 @@ int main(int argc, const char * argv[])
 
   // updater
   diagnostic_updater_t updater;
-  rc = rclc_diagnostic_updater_init(&updater, &updater_node, hardware_id, updater_id);
+  rc = rclc_diagnostic_updater_init(&updater, &my_node, 00, 42);
   if (rc != RCL_RET_OK) {
     printf("Error in creating diagnostic updater\n");
     return -1;
   }
   diagnostic_task_t task;
-  rc = rclc_diagnostic_task_init(&task, task_id, &my_diagnostic_task);
+  rc = rclc_diagnostic_task_init(
+    &task, 23,
+    &my_diagnostic_website_check);
   if (rc != RCL_RET_OK) {
     printf("Error in creating diagnostic task\n");
     return -1;
@@ -102,21 +107,21 @@ int main(int argc, const char * argv[])
     &updater,
     &task);
   if (rc != RCL_RET_OK) {
-    printf("Error in adding diagnostic diagnostic task\n");
+    printf("Error in adding diagnostic temp task\n");
     return -1;
   }
 
   for (unsigned int i = 0; i < 100; ++i) {
-    printf("Publishing processor diagnostics\n");
+    printf("Publishing website diagnostics\n");
     rc = rclc_diagnostic_updater_update(&updater);
     if (rc != RCL_RET_OK) {
-      printf("Error in publishing processor diagnostics\n");
+      printf("Error in publishing website diagnostics\n");
       return -1;
     }
     sleep(1);
   }
 
-  rclc_diagnostic_updater_fini(&updater, &updater_node);
+  rclc_diagnostic_updater_fini(&updater, &my_node);
   if (rc != RCL_RET_OK) {
     printf("Error while cleaning up!\n");
     return -1;

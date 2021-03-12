@@ -12,7 +12,7 @@ find_package(micro_ros_diagnostic_msgs REQUIRED)
 find_package(rclc REQUIRED)
 
 
-if("${rcl_lifecycle_VERSION}" VERSION_LESS "1.0.0")
+if("${rcl_VERSION}" VERSION_LESS "1.0.0")
   message(STATUS "Found rcl_lifecycle version ${rcl_lifecycle_VERSION}, which belongs to Eloquent or earlier")
   if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
     add_compile_options(-Wall -Wextra)
@@ -42,9 +42,17 @@ ament_target_dependencies(${PROJECT_NAME}
 )
 
 include_directories(include)
-add_executable(example_updater example/example_updater.c)
-target_link_libraries(example_updater ${PROJECT_NAME})
-ament_target_dependencies(example_updater
+
+add_executable(example_processor_updater example/example_processor_updater.c)
+target_link_libraries(example_processor_updater ${PROJECT_NAME})
+ament_target_dependencies(example_processor_updater
+  rclc
+  rcutils
+  micro_ros_diagnostic_msgs)
+
+add_executable(example_website_checker example/example_website_checker.c)
+target_link_libraries(example_website_checker ${PROJECT_NAME})
+ament_target_dependencies(example_website_checker
   rclc
   rcutils
   micro_ros_diagnostic_msgs)

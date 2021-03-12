@@ -27,25 +27,63 @@ extern "C"
 static int diagnostic_mockup_counter_0 = 0;
 static int diagnostic_mockup_counter_1 = 0;
 
-const char * update_function_mockup_0()
+rcl_ret_t
+update_function_mockup_0(diagnostic_value_t * kv)
 {
   ++diagnostic_mockup_counter_0;
-  return "23 degrees";
+  rclc_diagnostic_value_set_int(kv, 17);
+  rclc_diagnostic_value_set_level(
+    kv,
+    micro_ros_diagnostic_msgs__msg__MicroROSDiagnosticStatus__OK);
+
+  return RCL_RET_OK;
 }
 
-const char * update_function_mockup_1()
+rcl_ret_t
+update_function_mockup_1(diagnostic_value_t * kv)
 {
   ++diagnostic_mockup_counter_1;
-  return "42 degrees";
+  rclc_diagnostic_value_set_int(kv, 42);
+  rclc_diagnostic_value_set_level(
+    kv,
+    micro_ros_diagnostic_msgs__msg__MicroROSDiagnosticStatus__STALE);
+
+  return RCL_RET_OK;
 }
 
 TEST(TestDiagnosticUpdater, create_diagnostic_task) {
   diagnostic_task_t task;
-  rcl_ret_t rc = rclc_diagnostic_task_init(
-    &task,
-    "mytemperatur",
-    &update_function_mockup_0);
+  rcl_ret_t rc = rclc_diagnostic_task_init(&task, 0, &update_function_mockup_0);
   EXPECT_EQ(RCL_RET_OK, rc);
+}
+
+TEST(TestDiagnosticUpdater, create_diagnostic_values) {
+  diagnostic_value_t value;
+
+  rclc_diagnostic_value_set_int(&value, 17);
+  EXPECT_EQ(value.int_value, 17);
+  EXPECT_EQ(
+    value.value_type,
+    micro_ros_diagnostic_msgs__msg__MicroROSDiagnosticStatus__VALUE_INT);
+
+  rclc_diagnostic_value_lookup(&value, 17);
+  EXPECT_EQ(value.value_id, 17);
+  EXPECT_EQ(
+    value.value_type,
+    micro_ros_diagnostic_msgs__msg__MicroROSDiagnosticStatus__VALUE_LOOKUP);
+
+  rclc_diagnostic_value_set_level(
+    &value,
+    micro_ros_diagnostic_msgs__msg__MicroROSDiagnosticStatus__OK);
+  EXPECT_EQ(
+    value.level,
+    micro_ros_diagnostic_msgs__msg__MicroROSDiagnosticStatus__OK);
+  rclc_diagnostic_value_set_level(
+    &value,
+    micro_ros_diagnostic_msgs__msg__MicroROSDiagnosticStatus__WARN);
+  EXPECT_EQ(
+    value.level,
+    micro_ros_diagnostic_msgs__msg__MicroROSDiagnosticStatus__WARN);
 }
 
 TEST(TestDiagnosticUpdater, create_updater) {
@@ -62,12 +100,7 @@ TEST(TestDiagnosticUpdater, create_updater) {
 
   // updater
   diagnostic_updater_t updater;
-  rc = rclc_diagnostic_updater_init(
-    &updater,
-    &node,
-    "hw",
-    "mocked hardware monitoring",
-    "42");
+  rc = rclc_diagnostic_updater_init(&updater, &node, 0, 0);
   EXPECT_EQ(RCL_RET_OK, rc);
 
   // updater
@@ -89,37 +122,23 @@ TEST(TestDiagnosticUpdater, updater_add_tasks) {
 
   // updater
   diagnostic_updater_t updater;
-  rc = rclc_diagnostic_updater_init(
-    &updater,
-    &node,
-    "hw",
-    "mocked hardware monitoring",
-    "42");
+  rc = rclc_diagnostic_updater_init(&updater, &node, 0, 0);
   EXPECT_EQ(RCL_RET_OK, rc);
 
   diagnostic_task_t task;
-  rc = rclc_diagnostic_task_init(
-    &task,
-    "mytemperatur",
-    &update_function_mockup_0);
+  rc = rclc_diagnostic_task_init(&task, 17, &update_function_mockup_0);
   EXPECT_EQ(RCL_RET_OK, rc);
 
-  rc = rclc_diagnostic_updater_add_task(
-    &updater,
-    &task);
+  rc = rclc_diagnostic_updater_add_task(&updater, &task);
   EXPECT_EQ(RCL_RET_OK, rc);
 
   for (unsigned int i = 1; i < MICRO_ROS_UPDATER_MAX_NUMBER_OF_TASKS; ++i) {
-    rc = rclc_diagnostic_updater_add_task(
-      &updater,
-      &task);
+    rc = rclc_diagnostic_updater_add_task(&updater, &task);
     EXPECT_EQ(RCL_RET_OK, rc);
   }
 
   // Should exceed maximum number of tasks per updater
-  rc = rclc_diagnostic_updater_add_task(
-    &updater,
-    &task);
+  rc = rclc_diagnostic_updater_add_task(&updater, &task);
   EXPECT_EQ(RCL_RET_ERROR, rc);
 
   // updater
@@ -141,22 +160,17 @@ TEST(TestDiagnosticUpdater, updater_update) {
 
   // updater
   diagnostic_updater_t updater;
-  rc = rclc_diagnostic_updater_init(
-    &updater,
-    &node,
-    "hw",
-    "mocked hardware monitoring",
-    "42");
+  rc = rclc_diagnostic_updater_init(&updater, &node, 0, 0);
   EXPECT_EQ(RCL_RET_OK, rc);
 
   diagnostic_task_t task0, task1;
   rc = rclc_diagnostic_task_init(
     &task0,
-    "mytemperatur",
+    0,
     &update_function_mockup_0);
   rc = rclc_diagnostic_task_init(
     &task1,
-    "myothertemperatur",
+    1,
     &update_function_mockup_1);
 
   rc = rclc_diagnostic_updater_add_task(&updater, &task0);
