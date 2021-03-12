@@ -73,18 +73,16 @@ if(BUILD_TESTING)
   set(ament_cmake_copyright_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
 
-  find_package(ros_environment REQUIRED)
-  if(NOT $ENV{ROS_DISTRO} STREQUAL "dashing")
-    ament_add_gtest(${PROJECT_NAME}_test
-      test/test_diagnostic_updater.cpp)
+  ament_add_gtest(${PROJECT_NAME}_test
+    test/test_diagnostic_updater.cpp)
 
-    target_include_directories(${PROJECT_NAME}_test PRIVATE include src)
-    target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME})
-    ament_target_dependencies(${PROJECT_NAME}_test
-      rcl
-      rclc
-      micro_ros_diagnostic_msgs)
-  endif()
+  target_include_directories(${PROJECT_NAME}_test PRIVATE include src)
+  target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME})
+  ament_target_dependencies(${PROJECT_NAME}_test
+    rcl
+    rclc
+    micro_ros_diagnostic_msgs
+  )
 endif()
 
 # export dependencies

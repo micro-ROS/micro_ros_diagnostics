@@ -1,3 +1,7 @@
+[![License](https://img.shields.io/badge/License-Apache%202-blue.svg)](https://github.com/micro-ROS/micro_ros_diagnostics/blob/master/LICENSE)
+[![Build status](https://github.com/micro-ROS/micro_ros_diagnostics/workflows/Build%20action%3A%20Foxy%20%2B%20Rolling/badge.svg)](https://github.com/micro-ROS/micro_ros_diagnostics/actions)
+[![Code coverage](https://codecov.io/gh/micro-ROS/micro_ros_diagnostics/branch/master/graph/badge.svg)](https://codecov.io/gh/micro-ROS/micro_ros_diagnostics)
+
 General information about this repository, including legal information, build instructions and known issues/limitations, can be found in the [README](./README.md) of the repository root.
 
 # The micro-ROS diagnostics framework packages
@@ -8,7 +12,6 @@ This [ROS 2](https://index.ros.org/doc/ros2/) package provides a simple diagnost
 * [micro_ros_diagnostic_updater](./micro_ros_diagnostic_updater/) - rclc convenience functions for diagnostic updaters, publishing micro-ROS diagnostic messages (see above)
 * [micro_ros_common_diagnostics](./micro_ros_common_diagnostics/) - Micro-controller specific monitors
 * [micro_ros_diagnostic_bridge](./micro_ros_diagnostic_bridge/) - rclcpp package to translate micro-ROS diagnostic massages to vanilla ROS 2 diagnostic messages
-
 
 The micro-ROS diagnostics packages do not provide any aggregator as we assume that such aggregation takes place on a microprocessor running standard ROS 2. Hence, we assume the following typical architecture:
 
