@@ -60,28 +60,21 @@ if(BUILD_TESTING)
   find_package(ament_cmake_gtest REQUIRED)
   find_package(ament_lint_auto REQUIRED)
   find_package(osrf_testing_tools_cpp REQUIRED)
-  find_package(ros_environment REQUIRED)
   # the following line skips the linter which checks for copyrights
   # remove the line when a copyright and license is present in all source files
   set(ament_cmake_copyright_FOUND TRUE)
   ament_lint_auto_find_test_dependencies()
 
-  # disabling tests for dashing as they will
-  # i) only with dashing and
-  # ii) randomly fail ("double free or corruption")
-  # for unknown reasons.
-  if(NOT ${ROS_DISTRO} STREQUAL "dashing")
-    ament_add_gtest(${PROJECT_NAME}_test
-      test/test_diagnostic_updater.cpp)
+  ament_add_gtest(${PROJECT_NAME}_test
+    test/test_diagnostic_updater.cpp)
 
-    target_include_directories(${PROJECT_NAME}_test PRIVATE include src)
-    target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME})
-    ament_target_dependencies(${PROJECT_NAME}_test
-      rcl
-      rclc
-      micro_ros_diagnostic_msgs
-    )
-  endif()
+  target_include_directories(${PROJECT_NAME}_test PRIVATE include src)
+  target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME})
+  ament_target_dependencies(${PROJECT_NAME}_test
+    rcl
+    rclc
+    micro_ros_diagnostic_msgs
+  )
 endif()
 
 # export dependencies
