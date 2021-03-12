@@ -17,14 +17,14 @@ standards, e.g., ISO 26262.
 
 ## How to Build, Test, Install, and Use
 
-After you cloned this repository into your ROS 2 workspace folder, you may build and install it using colcon:  
+After you cloned this repository into your ROS 2 workspace folder, you may build and install it using colcon:
 $ `colcon build --packages-select micro_ros_diagnostic_updater`
 
 ## License
 
 The micro-ROS diagnostics framework packages are open-sourced under the Apache-2.0 license. See the [../LICENSE](LICENSE) file for details.
 
-For a list of other open-source components included in ROS 2 system_modes,
+For a list of other open-source components included in ROS 2 micro_ros_diagnostics,
 see the file [../3rd-party-licenses.txt](3rd-party-licenses.txt).
 
 ## Acknowledgments
