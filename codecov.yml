@@ -1,3 +1,4 @@
 ignore:
+  - "micro_ros_diagnostic_bridge/test"
   - "micro_ros_diagnostic_updater/example"
   - "micro_ros_diagnostic_updater/test"

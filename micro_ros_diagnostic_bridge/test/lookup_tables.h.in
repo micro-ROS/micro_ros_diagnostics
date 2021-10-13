@@ -1,0 +1,5 @@
+#pragma once
+
+#include <string>
+
+const static std::string LOOKUP_TABLE_PATH = "@LOOKUP_TABLE_PATH@";
