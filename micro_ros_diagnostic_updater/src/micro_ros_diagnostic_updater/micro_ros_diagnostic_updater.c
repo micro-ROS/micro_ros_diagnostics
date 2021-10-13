@@ -102,6 +102,9 @@ rclc_diagnostic_updater_init(
     return RCL_RET_ERROR;
   }
 
+  // message
+  micro_ros_diagnostic_msgs__msg__MicroROSDiagnosticStatus__init(&updater->diag_status);
+
   return RCL_RET_OK;
 }
 
@@ -112,6 +115,8 @@ rclc_diagnostic_updater_fini(
 {
   RCL_CHECK_FOR_NULL_WITH_MSG(
     updater, "updater is a null pointer", return RCL_RET_INVALID_ARGUMENT);
+
+  micro_ros_diagnostic_msgs__msg__MicroROSDiagnosticStatus__fini(&updater->diag_status);
 
   rcl_ret_t rc = rcl_publisher_fini(&updater->diag_pub, node);
   if (RCL_RET_OK != rc) {
@@ -162,26 +167,23 @@ rclc_diagnostic_updater_update(
   RCL_CHECK_FOR_NULL_WITH_MSG(
     updater, "updater is a null pointer", return RCL_RET_INVALID_ARGUMENT);
 
-  micro_ros_diagnostic_msgs__msg__MicroROSDiagnosticStatus diag_msg;
-  micro_ros_diagnostic_msgs__msg__MicroROSDiagnosticStatus__init(&diag_msg);
-
   // name
-  diag_msg.updater_id = updater->id;
-  diag_msg.hardware_id = updater->hardware_id;
+  updater->diag_status.updater_id = updater->id;
+  updater->diag_status.hardware_id = updater->hardware_id;
 
   for (unsigned int i = 0; i < updater->num_tasks; ++i) {
     rcl_ret_t task_ok = rclc_diagnostic_call_task(updater->tasks[i]);
 
     if (task_ok == RCL_RET_OK) {
-      diag_msg.key = updater->tasks[i]->id;
-      diag_msg.value_type = updater->tasks[i]->value.value_type;
-      diag_msg.bool_value = updater->tasks[i]->value.bool_value;
-      diag_msg.int_value = updater->tasks[i]->value.int_value;
-      diag_msg.double_value = updater->tasks[i]->value.double_value;
-      diag_msg.value_id = updater->tasks[i]->value.value_id;
-      diag_msg.level = updater->tasks[i]->value.level;
+      updater->diag_status.key = updater->tasks[i]->id;
+      updater->diag_status.value_type = updater->tasks[i]->value.value_type;
+      updater->diag_status.bool_value = updater->tasks[i]->value.bool_value;
+      updater->diag_status.int_value = updater->tasks[i]->value.int_value;
+      updater->diag_status.double_value = updater->tasks[i]->value.double_value;
+      updater->diag_status.value_id = updater->tasks[i]->value.value_id;
+      updater->diag_status.level = updater->tasks[i]->value.level;
 
-      rcl_ret_t rc = rcl_publish(&updater->diag_pub, &diag_msg, NULL);
+      rcl_ret_t rc = rcl_publish(&updater->diag_pub, &updater->diag_status, NULL);
       if (rc == RCL_RET_OK) {
         RCUTILS_LOG_DEBUG(
           "Updater '%d' published value for '%d'.",
@@ -195,8 +197,6 @@ rclc_diagnostic_updater_update(
         updater->tasks[i]->id);
     }
   }
-
-  micro_ros_diagnostic_msgs__msg__MicroROSDiagnosticStatus__fini(&diag_msg);
 
   return RCL_RET_OK;
 }
