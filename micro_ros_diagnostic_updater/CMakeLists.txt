@@ -25,7 +25,7 @@ else()
 endif()
 
 # build options
-option(MICRO_ROS_DIAGNOSTIC_UPDATER_EXAMPLES "Build example updaters for the micro-ROS diagnostic updater package." TRUE)
+option(MICRO_ROS_DIAGNOSTIC_UPDATER_EXAMPLES "Build example updaters for the micro-ROS diagnostic updater package." FALSE)
 
 # create library
 add_library(${PROJECT_NAME}
