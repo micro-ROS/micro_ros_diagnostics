@@ -9,7 +9,7 @@ General information about this repository, including legal information, build in
 This [ROS 2](https://index.ros.org/doc/ros2/) package provides a simple diagnostics framework for micro-ROS, built against rclc:
 
 * [micro_ros_diagnostic_msgs](./micro_ros_diagnostic_msgs/) - Diagnostic messages suited for micro-ROS, e.g., no use of arrays
-* [micro_ros_diagnostic_updater](./micro_ros_diagnostic_updater/) - rclc convenience functions for diagnostic updaters, publishing micro-ROS diagnostic messages (see above)
+* [micro_ros_diagnostic_updater](./micro_ros_diagnostic_updater/) - rclc convenience functions for diagnostic updaters, publishing micro-ROS diagnostic messages
 * [micro_ros_common_diagnostics](./micro_ros_common_diagnostics/) - Micro-controller specific monitors
 * [micro_ros_diagnostic_bridge](./micro_ros_diagnostic_bridge/) - rclcpp package to translate micro-ROS diagnostic massages to vanilla ROS 2 diagnostic messages
 
@@ -17,7 +17,7 @@ The micro-ROS diagnostics packages do not provide any aggregator as we assume th
 
 <img src="diagnostics_architecture.png" style="display:block; width:100%; margin-left:auto; margin-right:auto;"/>
 
-In order for the standard ROS 2 diagnostic aggregator to aggregate micro-ROS diagnostic message types, the ROS 2 agent has to translate micro-ROS diagnostic messages to standard ROS 2 diagnostic messages (*tbd*).
+In order for the standard ROS 2 diagnostic aggregator to aggregate micro-ROS diagnostic message types, the ROS 2 bridge translates micro-ROS diagnostic messages to standard ROS 2 diagnostic messages.
 
 For further information, please contact [Arne Nordmann](https://github.com/norro) or [Ralph Lange](https://github.com/ralph-lange).
 
@@ -34,6 +34,13 @@ standards, e.g., ISO 26262.
 
 After you cloned this repository into your ROS 2 workspace folder, you may build and install it using colcon:
 $ `colcon build --packages-select-regex micro_ros_.*diagn`
+
+In a typical architecture indicated above, you will need to build the packages 
+[micro_ros_diagnostic_msgs](./micro_ros_diagnostic_msgs/),
+[micro_ros_diagnostic_updater](./micro_ros_diagnostic_updater/), and
+[micro_ros_common_diagnostics](./micro_ros_common_diagnostics/) (optional) on the microcontroller. Build the packages
+[micro_ros_diagnostic_msgs](./micro_ros_diagnostic_msgs/) and
+[micro_ros_diagnostic_bridge](./micro_ros_diagnostic_bridge/) on the micro processor next to the micro-ROS agent.
 
 ## License
 

@@ -24,6 +24,9 @@ else()
   endif()
 endif()
 
+# build options
+option(MICRO_ROS_DIAGNOSTIC_UPDATER_EXAMPLES "Build example updaters for the micro-ROS diagnostic updater package." FALSE)
+
 # create library
 add_library(${PROJECT_NAME}
   src/micro_ros_diagnostic_updater/micro_ros_diagnostic_updater.c
@@ -43,19 +46,24 @@ ament_target_dependencies(${PROJECT_NAME}
 
 include_directories(include)
 
-add_executable(example_processor_updater example/example_processor_updater.c)
-target_link_libraries(example_processor_updater ${PROJECT_NAME})
-ament_target_dependencies(example_processor_updater
-  rclc
-  rcutils
-  micro_ros_diagnostic_msgs)
+# examples
+if(MICRO_ROS_DIAGNOSTIC_UPDATER_EXAMPLES)
+  message(STATUS "Building example updaters")
 
-add_executable(example_website_checker example/example_website_checker.c)
-target_link_libraries(example_website_checker ${PROJECT_NAME})
-ament_target_dependencies(example_website_checker
-  rclc
-  rcutils
-  micro_ros_diagnostic_msgs)
+  add_executable(example_processor_updater example/example_processor_updater.c)
+  target_link_libraries(example_processor_updater ${PROJECT_NAME})
+  ament_target_dependencies(example_processor_updater
+    rclc
+    rcutils
+    micro_ros_diagnostic_msgs)
+
+  add_executable(example_website_checker example/example_website_checker.c)
+  target_link_libraries(example_website_checker ${PROJECT_NAME})
+  ament_target_dependencies(example_website_checker
+    rclc
+    rcutils
+    micro_ros_diagnostic_msgs)
+endif()
 
 # install
 install(DIRECTORY include/ DESTINATION include)
