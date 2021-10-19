@@ -63,7 +63,7 @@ if(MICRO_ROS_DIAGNOSTIC_UPDATER_EXAMPLES)
     rclc
     rcutils
     micro_ros_diagnostic_msgs)
-endif(MICRO_ROS_DIAGNOSTIC_UPDATER_EXAMPLES)
+endif()
 
 # install
 install(DIRECTORY include/ DESTINATION include)
