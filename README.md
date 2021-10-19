@@ -38,7 +38,7 @@ $ `colcon build --packages-select-regex micro_ros_.*diagn`
 In a typical architecture indicated above, you will need to build the packages 
 [micro_ros_diagnostic_msgs](./micro_ros_diagnostic_msgs/),
 [micro_ros_diagnostic_updater](./micro_ros_diagnostic_updater/), and
-[micro_ros_common_diagnostics](./micro_ros_common_diagnostics/) on the microcontroller. Build the packages
+[micro_ros_common_diagnostics](./micro_ros_common_diagnostics/) (optional) on the microcontroller. Build the packages
 [micro_ros_diagnostic_msgs](./micro_ros_diagnostic_msgs/) and
 [micro_ros_diagnostic_bridge](./micro_ros_diagnostic_bridge/) on the micro processor next to the micro-ROS agent.
 
