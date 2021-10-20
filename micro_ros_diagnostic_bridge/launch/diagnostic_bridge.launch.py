@@ -19,7 +19,7 @@ from launch.substitutions import LaunchConfiguration
 
 import launch_ros.actions
 
-logger = launch.substitutions.LaunchConfiguration("log_level")
+logger = launch.substitutions.LaunchConfiguration('log_level')
 
 
 def generate_launch_description():
@@ -29,7 +29,7 @@ def generate_launch_description():
             description='Path to lookup table'),
         launch.actions.DeclareLaunchArgument(
             'log_level',
-            default_value=["info"],
+            default_value=['info'],
             description='Logging level'),
         launch_ros.actions.Node(
             package='micro_ros_diagnostic_bridge',
