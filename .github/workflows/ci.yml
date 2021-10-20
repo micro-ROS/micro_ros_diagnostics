@@ -1,10 +1,9 @@
-name: "Build action: Foxy + Rolling"
+name: "Build + Coverage"
 
 on:
   push:
     branches: [ master ]
   pull_request:
-    branches: [ master ]
   schedule:
     # Run once per day to detect broken dependencies.
     - cron: '33 5 * * *'
@@ -16,7 +15,7 @@ jobs:
       fail-fast: false
       matrix:
         os: [ ubuntu-20.04 ]
-        ros_distribution: [ foxy, rolling ]
+        ros_distribution: [ foxy, galactic, rolling ]
     steps:
     - uses: actions/checkout@v2
     - uses: ros-tooling/setup-ros@0.1.2
@@ -27,7 +26,12 @@ jobs:
         package-name: "micro_ros_diagnostic_msgs micro_ros_diagnostic_updater micro_ros_common_diagnostics"
         vcs-repo-file-url: ""
         target-ros2-distro: ${{ matrix.ros_distribution }}
-        colcon-mixin-name: coverage-gcc
+         colcon-defaults: |
+          {
+            "build": {
+              "mixin": ["coverage-gcc"]
+            }
+          }
         colcon-mixin-repository: https://raw.githubusercontent.com/colcon/colcon-mixin-repository/master/index.yaml
     - uses: codecov/codecov-action@v1.2.2
       with:
