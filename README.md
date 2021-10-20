@@ -1,5 +1,5 @@
 [![License](https://img.shields.io/badge/License-Apache%202-blue.svg)](https://github.com/micro-ROS/micro_ros_diagnostics/blob/master/LICENSE)
-[![Build status](https://github.com/micro-ROS/micro_ros_diagnostics/workflows/Build%20action%3A%20Foxy%20%2B%20Rolling/badge.svg)](https://github.com/micro-ROS/micro_ros_diagnostics/actions)
+[![Build status](https://github.com/micro-ROS/micro_ros_diagnostics/workflows/Build%20%2B%20Coverage/badge.svg)](https://github.com/micro-ROS/micro_ros_diagnostics/actions)
 [![Code coverage](https://codecov.io/gh/micro-ROS/micro_ros_diagnostics/branch/master/graph/badge.svg)](https://codecov.io/gh/micro-ROS/micro_ros_diagnostics)
 
 General information about this repository, including legal information, build instructions and known issues/limitations, can be found in the [README](./README.md) of the repository root.
