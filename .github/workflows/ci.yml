@@ -24,7 +24,7 @@ jobs:
         required-ros-distributions: ${{ matrix.ros_distribution }}
     - uses : ros-tooling/action-ros-ci@v0.2
       with:
-        package-name: "micro_ros_diagostic_updater micro_ros_diagostic_msgs micro_ros_diagostic_bridge micro_ros_commons_diagostics"
+        package-name: "micro_ros_diagnostic_updater micro_ros_diagnostic_msgs micro_ros_diagnostic_bridge micro_ros_common_diagnostics"
         target-ros2-distro: ${{ matrix.ros_distribution }}
         colcon-defaults: |
           {
