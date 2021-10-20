@@ -21,6 +21,14 @@ find_package(diagnostic_msgs REQUIRED)
 find_package(micro_ros_diagnostic_msgs REQUIRED)
 find_package(rclcpp REQUIRED)
 
+# configure diagnostics topics
+set(DIAGNOSTICS_TOPIC_IN "/diagnostics_uros" CACHE STRING "micro-ROS diagnostics topic to subscribe to")
+set(DIAGNOSTICS_TOPIC_OUT "/diagnostics" CACHE STRING "ROS diagnostics topic to publish to")
+configure_file(
+  include/${PROJECT_NAME}/topics.h.in
+  ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}/topics.h)
+include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
+
 # bridge executable
 include_directories(include)
 add_executable(diagnostic_bridge
