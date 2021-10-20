@@ -9,6 +9,7 @@
   <license>Apache License 2.0</license>
 
   <author email="arne.nordmann@de.bosch.com">Arne Nordmann</author>
+  <author email="bjv@capra.ooo">Bartolome Jimenez Vera</author>
 
   <buildtool_depend>ament_cmake_ros</buildtool_depend>
 
