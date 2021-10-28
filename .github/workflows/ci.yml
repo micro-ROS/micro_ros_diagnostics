@@ -23,10 +23,11 @@ jobs:
         required-ros-distributions: ${{ matrix.ros_distribution }}
     - uses : ros-tooling/action-ros-ci@0.1.1
       with:
-        package-name: "micro_ros_diagnostic_msgs micro_ros_diagnostic_updater micro_ros_common_diagnostics"
-        vcs-repo-file-url: ""
         target-ros2-distro: ${{ matrix.ros_distribution }}
-         colcon-defaults: |
+        package-name: "micro_ros_diagnostic_msgs micro_ros_diagnostic_updater micro_ros_common_diagnostics"
+        vcs-repo-file-url: |
+          https://raw.githubusercontent.com/ros2/ros2/master/ros2.repos
+        colcon-defaults: |
           {
             "build": {
               "mixin": ["coverage-gcc"]
