@@ -2,7 +2,7 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>micro_ros_common_diagnostics</name>
-  <version>0.0.0</version>
+  <version>0.2.0</version>
   <description>Common microcontroller-specific diagnostics and monitors.</description>
   <maintainer email="arne.nordmann@de.bosch.com">Arne Nordmann</maintainer>
   <license>Apache License 2.0</license>
