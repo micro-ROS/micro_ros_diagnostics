@@ -17,11 +17,11 @@ jobs:
         os: [ ubuntu-20.04 ]
         ros_distribution: [ foxy, galactic, rolling ]
     steps:
-    - uses: actions/checkout@v2
-    - uses: ros-tooling/setup-ros@0.1.2
+    - uses: actions/checkout@v2.3.4
+    - uses: ros-tooling/setup-ros@v0.2
       with:
         required-ros-distributions: ${{ matrix.ros_distribution }}
-    - uses : ros-tooling/action-ros-ci@0.1.1
+    - uses : ros-tooling/action-ros-ci@v0.2
       with:
         target-ros2-distro: ${{ matrix.ros_distribution }}
         package-name: "micro_ros_diagnostic_msgs micro_ros_diagnostic_updater micro_ros_common_diagnostics"
@@ -34,6 +34,6 @@ jobs:
             }
           }
         colcon-mixin-repository: https://raw.githubusercontent.com/colcon/colcon-mixin-repository/master/index.yaml
-    - uses: codecov/codecov-action@v1.2.2
+    - uses: codecov/codecov-action@v1.5.0
       with:
         file: ros_ws/lcov/total_coverage.info
