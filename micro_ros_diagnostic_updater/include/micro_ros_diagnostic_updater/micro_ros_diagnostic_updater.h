@@ -18,12 +18,12 @@
 
 #include <rcl/types.h>
 #include <rclc/publisher.h>
+
 #include <micro_ros_diagnostic_msgs/msg/micro_ros_diagnostic_status.h>
+#include "micro_ros_diagnostic_updater/config.h"
 
 #define MICRO_ROS_UPDATER_MAX_NUMBER_OF_TASKS 5
 #define MICRO_ROS_UPDATER_MAX_NUMBER_OF_TASKS 5
-
-static const char UROS_DIAGNOSTICS_UPDATER_TOPIC[] = "/diagnostics_uros";
 
 typedef struct diagnostic_value_t
 {

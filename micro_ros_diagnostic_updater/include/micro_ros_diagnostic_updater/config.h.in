@@ -1,0 +1,3 @@
+#pragma once
+
+static const char UROS_DIAGNOSTIC_UPDATER_TOPIC[] = "@MICRO_ROS_DIAGNOSTIC_UPDATER_TOPIC_PREFIX@diagnostics_uros";

@@ -26,6 +26,12 @@ endif()
 
 # build options
 option(MICRO_ROS_DIAGNOSTIC_UPDATER_EXAMPLES "Build example updaters for the micro-ROS diagnostic updater package." FALSE)
+set(MICRO_ROS_DIAGNOSTIC_UPDATER_TOPIC_PREFIX "" CACHE STRING "Prefix for diagnostic output topic (append slash '/').")
+configure_file(
+  include/${PROJECT_NAME}/config.h.in
+  ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}/config.h
+  @ONLY)
+include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
 
 # create library
 add_library(${PROJECT_NAME}
