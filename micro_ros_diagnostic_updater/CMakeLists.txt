@@ -32,6 +32,8 @@ configure_file(
   ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}/config.h
   @ONLY)
 include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}/config.h
+  DESTINATION include/${PROJECT_NAME})
 
 # create library
 add_library(${PROJECT_NAME}
@@ -72,7 +74,9 @@ if(MICRO_ROS_DIAGNOSTIC_UPDATER_EXAMPLES)
 endif()
 
 # install
-install(DIRECTORY include/ DESTINATION include)
+install(DIRECTORY include/
+  PATTERN "*.h.in" EXCLUDE
+  DESTINATION include)
 install(TARGETS ${PROJECT_NAME} DESTINATION lib)
 
 ament_export_include_directories(include)

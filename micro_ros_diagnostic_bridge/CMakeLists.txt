@@ -28,6 +28,8 @@ configure_file(
   include/${PROJECT_NAME}/config.h.in
   ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}/config.h)
 include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}/config.h
+  DESTINATION include/${PROJECT_NAME})
 
 # bridge executable
 include_directories(include)
@@ -53,7 +55,9 @@ install(TARGETS diagnostic_bridge
 install(DIRECTORY launch DESTINATION share/${PROJECT_NAME}/)
 
 # install
-install(DIRECTORY include/ DESTINATION include)
+install(DIRECTORY include/
+  PATTERN "*.h.in" EXCLUDE
+  DESTINATION include)
 
 ament_export_include_directories(include)
 ament_export_libraries(${PROJECT_NAME})
