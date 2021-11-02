@@ -4,6 +4,7 @@ on:
   push:
     branches: [ master ]
   pull_request:
+    branches: [ master ]
   schedule:
     # Run once per day to detect broken dependencies.
     - cron: '33 5 * * *'
@@ -25,12 +26,13 @@ jobs:
       with:
         target-ros2-distro: ${{ matrix.ros_distribution }}
         package-name: "micro_ros_diagnostic_msgs micro_ros_diagnostic_updater micro_ros_common_diagnostics"
-        vcs-repo-file-url: |
-          https://raw.githubusercontent.com/ros2/ros2/master/ros2.repos
         colcon-defaults: |
           {
             "build": {
-              "mixin": ["coverage-gcc"]
+              "mixin": ["coverage-gcc", "coverage-pytest"]
+            },
+            "test": {
+              "mixin": ["coverage-pytest"]
             }
           }
         colcon-mixin-repository: https://raw.githubusercontent.com/colcon/colcon-mixin-repository/master/index.yaml
