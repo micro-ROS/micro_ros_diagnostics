@@ -25,7 +25,7 @@
 
 #include "diagnostic_msgs/msg/diagnostic_status.hpp"
 #include "micro_ros_diagnostic_msgs/msg/micro_ros_diagnostic_status.hpp"
-#include "micro_ros_diagnostic_bridge/topics.h"
+#include "micro_ros_diagnostic_bridge/config.h"
 
 namespace uros_diagnostic_msg = micro_ros_diagnostic_msgs::msg;
 namespace diagnostic_msg = diagnostic_msgs::msg;
