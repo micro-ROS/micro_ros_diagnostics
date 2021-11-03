@@ -22,13 +22,12 @@ find_package(micro_ros_diagnostic_msgs REQUIRED)
 find_package(rclcpp REQUIRED)
 
 # configure diagnostics topics
-set(DIAGNOSTICS_TOPIC_IN "diagnostics_uros" CACHE STRING "micro-ROS diagnostics topic to subscribe to")
-set(DIAGNOSTICS_TOPIC_OUT "diagnostics" CACHE STRING "ROS diagnostics topic to publish to")
+set(DIAGNOSTICS_TOPIC_PREFIX "" CACHE STRING "Prefix for micro-ROS diagnostic topic (append slash '/')")
 configure_file(
-  include/${PROJECT_NAME}/config.h.in
-  ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}/config.h)
+  include/${PROJECT_NAME}/config.hpp.in
+  ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}/config.hpp)
 include_directories(BEFORE ${CMAKE_CURRENT_BINARY_DIR})
-install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}/config.h
+install(FILES ${CMAKE_CURRENT_BINARY_DIR}/${PROJECT_NAME}/config.hpp
   DESTINATION include/${PROJECT_NAME})
 
 # bridge executable

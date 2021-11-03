@@ -1,4 +1,0 @@
-#pragma once
-
-static const char UROS_DIAGNOSTICS_BRIDGE_TOPIC_IN[] = "@DIAGNOSTICS_TOPIC_IN@";
-static const char UROS_DIAGNOSTICS_BRIDGE_TOPIC_OUT[] = "@DIAGNOSTICS_TOPIC_OUT@";

@@ -1,0 +1,4 @@
+#pragma once
+
+static const char UROS_DIAGNOSTICS_BRIDGE_TOPIC_IN[] = "@DIAGNOSTICS_TOPIC_PREFIX@diagnostics_uros";
+static const char UROS_DIAGNOSTICS_BRIDGE_TOPIC_OUT[] = "diagnostics";
