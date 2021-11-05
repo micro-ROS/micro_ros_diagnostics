@@ -85,13 +85,13 @@ int main(int argc, const char * argv[])
 
   // updater
   diagnostic_updater_t updater;
-  rc = rclc_diagnostic_updater_init(&updater, &updater_node, hardware_id, updater_id);
+  rc = rclc_diagnostic_updater_init(&updater, &updater_node);
   if (rc != RCL_RET_OK) {
     printf("Error in creating diagnostic updater\n");
     return -1;
   }
   diagnostic_task_t task;
-  rc = rclc_diagnostic_task_init(&task, task_id, &my_diagnostic_task);
+  rc = rclc_diagnostic_task_init(&task, hardware_id, updater_id, task_id, &my_diagnostic_task);
   if (rc != RCL_RET_OK) {
     printf("Error in creating diagnostic task\n");
     return -1;
