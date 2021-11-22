@@ -4,7 +4,7 @@ General information about this repository, including legal information, build in
 
 micro-ROS diagnostic bridge is a [ROS 2](http://www.ros2.org/) package that provides a bridge to translate micro-ROS diagnostic messages to vanilla ROS 2 diagnostic messages based on a lookup table.
 
-An exemplary lookup table can be found in: [example_table.yaml](example_table.yaml)
+An exemplary lookup table can be found in: [example_table.yaml](example/example_table.yaml)
 
 ## Purpose of the Project
 

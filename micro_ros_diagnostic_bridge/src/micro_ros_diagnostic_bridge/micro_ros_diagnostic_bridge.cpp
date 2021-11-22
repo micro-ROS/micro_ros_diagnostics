@@ -45,8 +45,8 @@ MicroROSDiagnosticBridge::MicroROSDiagnosticBridge(const std::string & path)
     {
       RCLCPP_DEBUG(
         get_logger(),
-        "Bridging message from hardware %d, updater %d",
-        msg_in->hardware_id, msg_in->updater_id);
+        "Bridging message from hardware %d, updater %d", msg_in->hardware_id,
+        msg_in->updater_id);
       msg_out_ = std::make_unique<diagnostic_msgs::msg::DiagnosticStatus>();
 
       auto updater = lookup_updater(msg_in->updater_id);
@@ -57,6 +57,7 @@ MicroROSDiagnosticBridge::MicroROSDiagnosticBridge(const std::string & path)
       msg_out_->level = msg_in->level;
 
       diagnostic_msgs::msg::KeyValue keyvalue;
+      RCLCPP_DEBUG(get_logger(), "Bridging updater %d, task %d", msg_in->updater_id, msg_in->key);
       keyvalue.key = lookup_key(msg_in->updater_id, msg_in->key);
       switch (msg_in->value_type) {
         case micro_ros_diagnostic_msgs::msg::MicroROSDiagnosticStatus::VALUE_BOOL:
@@ -77,13 +78,16 @@ MicroROSDiagnosticBridge::MicroROSDiagnosticBridge(const std::string & path)
       ros2_pub_->publish(std::move(msg_out_));
     };
 
+  rclcpp::QoS qos{rclcpp::KeepLast{10}};
+  qos.reliable();
+
   uros_sub_ = create_subscription<MicroROSDiagnosticStatus>(
     UROS_DIAGNOSTICS_BRIDGE_TOPIC_IN,
-    rclcpp::SystemDefaultsQoS(),
+    qos,
     callback);
   ros2_pub_ = create_publisher<DiagnosticStatus>(
     UROS_DIAGNOSTICS_BRIDGE_TOPIC_OUT,
-    rclcpp::SystemDefaultsQoS());
+    qos);
 }
 
 std::string
@@ -163,16 +167,23 @@ MicroROSDiagnosticBridge::read_lookup_table(const std::string & path)
   for (it = param_map.begin(); it != param_map.end(); it++) {
     if (it->first.compare("/hardware_ids") == 0) {
       for (auto & p : it->second) {
-        hardware_map_[std::stoi(p.get_name())] = p.value_to_string();
+        try {
+          hardware_map_[std::stoi(p.get_name())] = p.value_to_string();
+        } catch (const std::invalid_argument &) {
+          throw std::runtime_error("Failed to parse hardware_id from lookup_table.");
+        }
       }
     }
 
     if (it->first.compare("/updaters") == 0) {
       std::string updater_key, updater_name, updater_descr, key, key_name;
       for (auto & p : it->second) {
+
         auto pos = p.get_name().find('.');
         if (pos != std::string::npos) {
           updater_key = p.get_name().substr(0, pos);
+        } else {
+          throw std::runtime_error("Failed to load updater key.");
         }
 
         // Updater

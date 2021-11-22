@@ -19,7 +19,15 @@
 
 #include "micro_ros_diagnostic_updater/micro_ros_diagnostic_updater.h"
 
-static int my_diagnostic_temp = 0;
+static uint32_t my_diagnostic_temp = 0;
+// The updater id
+static const int16_t PROCESSOR_ID = 17;
+// The hardware id
+static const int16_t PROCESSOR_SERIAL = 1001;
+// Task id
+static const int16_t PROCESSOR_TEMPERATURE_TASK_ID = 0;
+// Task id
+static const int16_t PROCESSOR_LOAD_TASK_ID = 1;
 
 rcl_ret_t
 my_diagnostic_temperature(diagnostic_value_t * temp_kv)
@@ -94,22 +102,22 @@ int main(int argc, const char * argv[])
 
   // updater
   diagnostic_updater_t updater;
-  rc = rclc_diagnostic_updater_init(&updater, &my_node, 17, 42);
+  rc = rclc_diagnostic_updater_init(&updater, &my_node);
   if (rc != RCL_RET_OK) {
     printf("Error in creating diagnostic updater\n");
     return -1;
   }
-  diagnostic_task_t task;
+  diagnostic_task_t temperature_task;
   rc = rclc_diagnostic_task_init(
-    &task, 0,
+    &temperature_task, PROCESSOR_SERIAL, PROCESSOR_ID, PROCESSOR_TEMPERATURE_TASK_ID,
     &my_diagnostic_temperature);
   if (rc != RCL_RET_OK) {
     printf("Error in creating diagnostic task\n");
     return -1;
   }
-  diagnostic_task_t ltask;
+  diagnostic_task_t load_task;
   rc = rclc_diagnostic_task_init(
-    &ltask, 1,
+    &load_task, PROCESSOR_SERIAL, PROCESSOR_ID, PROCESSOR_LOAD_TASK_ID,
     &my_diagnostic_load);
   if (rc != RCL_RET_OK) {
     printf("Error in creating diagnostic website checker\n");
@@ -119,21 +127,20 @@ int main(int argc, const char * argv[])
   // adding tasks
   rc = rclc_diagnostic_updater_add_task(
     &updater,
-    &task);
+    &temperature_task);
   if (rc != RCL_RET_OK) {
     printf("Error in adding diagnostic temp task\n");
     return -1;
   }
   rc = rclc_diagnostic_updater_add_task(
     &updater,
-    &ltask);
+    &load_task);
   if (rc != RCL_RET_OK) {
     printf("Error in adding diagnostic website task\n");
     return -1;
   }
 
   for (unsigned int i = 0; i < 100; ++i) {
-    printf("Publishing processor diagnostics\n");
     rc = rclc_diagnostic_updater_update(&updater);
     if (rc != RCL_RET_OK) {
       printf("Error in publishing temp diagnostics\n");

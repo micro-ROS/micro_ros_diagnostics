@@ -4,7 +4,9 @@ General information about this repository, including legal information, build in
 
 micro-ROS diagnostic updater is a [ROS 2](http://www.ros2.org/) package that provides convenience functions to implement diagnostic tasks amd updaters based on the ROS Client C-Library (RCLC) for micro-ROS.
 
-An exemplary implementation can be found in: [example/example_updater.c](example_updater.c)
+An exemplary implementation can be found in: [example/example_updater.c](example_updater.c).
+
+The examples are disabled by default, to build the examples, build with `MICRO_ROS_DIAGNOSTIC_UPDATER_EXAMPLES=ON`
 
 ## Purpose of the Project
 
@@ -18,7 +20,21 @@ standards, e.g., ISO 26262.
 ## How to Build, Test, Install, and Use
 
 After you cloned this repository into your ROS 2 workspace folder, you may build and install it using colcon:
-$ `colcon build --packages-select micro_ros_diagnostic_updater`
+```
+colcon build --packages-select micro_ros_diagnostic_updater
+```
+### Build with examples ###
+
+As mentioned, this package does not build the examples by default, to do so, you can build with
+
+```
+colcon build --packages-select micro_ros_diagnostic_updater --cmake-args -DMICRO_ROS_DIAGNOSTIC_UPDATER_EXAMPLES=ON
+```
+
+## Usage ##
+
+
+
 
 ## License
 

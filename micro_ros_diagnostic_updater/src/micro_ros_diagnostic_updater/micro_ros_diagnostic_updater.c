@@ -87,13 +87,11 @@ rclc_diagnostic_updater_init(
     micro_ros_diagnostic_msgs,
     msg,
     MicroROSDiagnosticStatus);
-  rcl_publisher_options_t pub_options = rcl_publisher_get_default_options();
-  rcl_ret_t rc = rcl_publisher_init(
+  rcl_ret_t rc = rclc_publisher_init_default(
     &updater->diag_pub,
     node,
     diag_type_support,
-    topic_name,
-    &pub_options);
+    topic_name);
   if (RCL_RET_OK != rc) {
     RCUTILS_LOG_ERROR(
       "Updater '%d' could not create publisher /%s.",
