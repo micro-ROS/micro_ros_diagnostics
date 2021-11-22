@@ -31,11 +31,6 @@ As mentioned, this package does not build the examples by default, to do so, you
 colcon build --packages-select micro_ros_diagnostic_updater --cmake-args -DMICRO_ROS_DIAGNOSTIC_UPDATER_EXAMPLES=ON
 ```
 
-## Usage ##
-
-
-
-
 ## License
 
 The micro-ROS diagnostics framework packages are open-sourced under the Apache-2.0 license. See the [../LICENSE](LICENSE) file for details.

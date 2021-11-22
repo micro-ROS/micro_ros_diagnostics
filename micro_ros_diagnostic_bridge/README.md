@@ -4,7 +4,7 @@ General information about this repository, including legal information, build in
 
 micro-ROS diagnostic bridge is a [ROS 2](http://www.ros2.org/) package that provides a bridge to translate micro-ROS diagnostic messages to vanilla ROS 2 diagnostic messages based on a lookup table.
 
-An exemplary lookup table can be found in: [example_table.yaml](example/example_table.yaml)
+An exemplary lookup table can be found in: [example_table.yaml](example/example_table.yaml), along with an [example launch file](example/launch/example_diagnostic_bridge.launch.py)
 
 ## Purpose of the Project
 
@@ -18,7 +18,17 @@ standards, e.g., ISO 26262.
 ## How to Build, Test, Install, and Use
 
 After you cloned this repository into your ROS 2 workspace folder, you may build and install it using colcon:
-$ `colcon build --packages-select micro_ros_diagnostic_bridge`
+```
+colcon build --packages-select micro_ros_diagnostic_bridge
+```
+
+### Build with examples ###
+
+As mentioned, this package does not build the examples by default, to do so, you can build with
+
+```
+colcon build --packages-select micro_ros_diagnostic_bridge --cmake-args -DMICRO_ROS_DIAGNOSTIC_BRIDGE_EXAMPLES=ON
+```
 
 ## License
 

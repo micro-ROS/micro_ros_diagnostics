@@ -42,6 +42,38 @@ In a typical architecture indicated above, you will need to build the packages
 [micro_ros_diagnostic_msgs](./micro_ros_diagnostic_msgs/) and
 [micro_ros_diagnostic_bridge](./micro_ros_diagnostic_bridge/) on the micro processor next to the micro-ROS agent.
 
+## Running the example ##
+
+The examples can be used as a usage reference. You'll find an [example launch configuration](micro_ros_diagnostic_bridge/example/launch/example_diagnostic_bridge.launch.py) on the micro_ros_diagnostic_bridge. This example can be run along the examples available in the [micro_ros_diagnostic_updater package](micro_ros_diagnostic_updater).
+
+First, build both packages with the examples enabled
+```
+colcon build --cmake-args -DMICRO_ROS_DIAGNOSTIC_BRIDGE_EXAMPLES=ON -DMICRO_ROS_DIAGNOSTIC_UPDATER_EXAMPLES=ON
+```
+
+You'll need three (or four) terminals for the second step. On the first one, source your `setup.sh` and launch the example bridge
+
+```
+. install/setup.sh
+ros2 launch micro_ros_diagnostic_bridge example_diagnostic_bridge.launch.py
+```
+
+On the second terminal, source `setup.sh` and run the [processor info example](../micro_ros_diagnostic_updater/example/example_processor_updater.c)
+
+```
+. install/setup.sh
+ros2 run micro_ros_diagnostic_updater example_processor_updater
+```
+
+Lastly, on the third terminal, see the diagnostic messages
+
+```
+. install/setup.sh
+ros2 topic echo /diagnostics
+```
+
+You can open a fourth terminal and run the [website checker example](../micro_ros_diagnostic_updater/example/example_website_checker.c)
+
 ## License
 
 The micro-ROS diagnostics framework packages are open-sourced under the Apache-2.0 license. See the [LICENSE](LICENSE) file for details.
