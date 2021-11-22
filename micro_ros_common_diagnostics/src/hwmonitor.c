@@ -107,7 +107,6 @@ int main(int argc, const char * argv[])
   }
 
   for (unsigned int i = 0; i < 100; ++i) {
-    printf("Publishing processor diagnostics\n");
     rc = rclc_diagnostic_updater_update(&updater);
     if (rc != RCL_RET_OK) {
       printf("Error in publishing processor diagnostics\n");

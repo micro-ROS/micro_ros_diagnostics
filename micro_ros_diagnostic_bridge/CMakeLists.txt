@@ -15,6 +15,9 @@ if(CMAKE_COMPILER_IS_GNUCXX OR CMAKE_CXX_COMPILER_ID MATCHES "Clang")
   add_compile_options(-Wall -Wextra -Wpedantic)
 endif()
 
+# build options
+option(MICRO_ROS_DIAGNOSTIC_BRIDGE_EXAMPLES "Build example updaters for the micro-ROS diagnostic bridge package." FALSE)
+
 # find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(diagnostic_msgs REQUIRED)
@@ -49,6 +52,13 @@ install(DIRECTORY include/ DESTINATION include)
 
 ament_export_include_directories(include)
 ament_export_libraries(${PROJECT_NAME})
+
+if(MICRO_ROS_DIAGNOSTIC_BRIDGE_EXAMPLES)
+  # launch
+  install(DIRECTORY example/launch DESTINATION share/${PROJECT_NAME}/)
+  # table
+  install(FILES example/example_table.yaml DESTINATION share/${PROJECT_NAME}/)
+endif()
 
 if(BUILD_TESTING)
   find_package(ament_cmake_gtest REQUIRED)

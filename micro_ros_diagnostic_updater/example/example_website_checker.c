@@ -22,13 +22,20 @@
 
 static int my_diagnostic_status = 0;
 static int my_website_status = 0;
+// Hardware ID
+static const int16_t WEBSITE_SERIAL = 998;
+// Updater ID
+static const int16_t WEBSITE_ID = 0;
+// Task ID
+static const int16_t WEBSITE_STATUS_TASK_ID = 42;
+
 
 rcl_ret_t
 my_diagnostic_website_check(diagnostic_value_t * kv)
 {
   ++my_diagnostic_status;
   if (my_diagnostic_status > 99) {
-    my_diagnostic_status -= 0;
+    my_diagnostic_status = 0;
   }
   if (my_diagnostic_status % 13 == 0) {
     my_website_status = 404;
@@ -88,14 +95,14 @@ int main(int argc, const char * argv[])
 
   // updater
   diagnostic_updater_t updater;
-  rc = rclc_diagnostic_updater_init(&updater, &my_node, 00, 42);
+  rc = rclc_diagnostic_updater_init(&updater, &my_node);
   if (rc != RCL_RET_OK) {
     printf("Error in creating diagnostic updater\n");
     return -1;
   }
   diagnostic_task_t task;
   rc = rclc_diagnostic_task_init(
-    &task, 23,
+    &task, WEBSITE_SERIAL, WEBSITE_ID, WEBSITE_STATUS_TASK_ID,
     &my_diagnostic_website_check);
   if (rc != RCL_RET_OK) {
     printf("Error in creating diagnostic task\n");
@@ -112,7 +119,6 @@ int main(int argc, const char * argv[])
   }
 
   for (unsigned int i = 0; i < 100; ++i) {
-    printf("Publishing website diagnostics\n");
     rc = rclc_diagnostic_updater_update(&updater);
     if (rc != RCL_RET_OK) {
       printf("Error in publishing website diagnostics\n");

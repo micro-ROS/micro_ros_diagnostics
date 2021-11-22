@@ -50,19 +50,31 @@ include_directories(include)
 if(MICRO_ROS_DIAGNOSTIC_UPDATER_EXAMPLES)
   message(STATUS "Building example updaters")
 
-  add_executable(example_processor_updater example/example_processor_updater.c)
-  target_link_libraries(example_processor_updater ${PROJECT_NAME})
-  ament_target_dependencies(example_processor_updater
+  set(processor_example example_processor_updater)
+  add_executable(${processor_example} example/example_processor_updater.c)
+  target_link_libraries(${processor_example} ${PROJECT_NAME})
+  ament_target_dependencies(${processor_example}
     rclc
     rcutils
     micro_ros_diagnostic_msgs)
 
-  add_executable(example_website_checker example/example_website_checker.c)
-  target_link_libraries(example_website_checker ${PROJECT_NAME})
-  ament_target_dependencies(example_website_checker
+  install(TARGETS
+    ${processor_example}
+    RUNTIME DESTINATION lib/${PROJECT_NAME}
+  )
+
+  set(website_example example_website_checker)
+  add_executable(${website_example} example/example_website_checker.c)
+  target_link_libraries(${website_example} ${PROJECT_NAME})
+  ament_target_dependencies(${website_example}
     rclc
     rcutils
     micro_ros_diagnostic_msgs)
+
+  install(TARGETS
+    ${website_example}
+    RUNTIME DESTINATION lib/${PROJECT_NAME}
+  )
 endif()
 
 # install
