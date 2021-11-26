@@ -178,7 +178,6 @@ MicroROSDiagnosticBridge::read_lookup_table(const std::string & path)
     if (it->first.compare("/updaters") == 0) {
       std::string updater_key, updater_name, updater_descr, key, key_name;
       for (auto & p : it->second) {
-
         auto pos = p.get_name().find('.');
         if (pos != std::string::npos) {
           updater_key = p.get_name().substr(0, pos);

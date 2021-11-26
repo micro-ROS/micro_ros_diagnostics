@@ -1,0 +1,15 @@
+analyzers:
+  ros__parameters:
+    path: Analysis
+    web:
+      type: diagnostic_aggregator/GenericAnalyzer
+      path: Web
+      contains: [ 'google' ]
+    hw:
+      type: 'diagnostic_aggregator/AnalyzerGroup'
+      path: HW
+      analyzers:
+        proc:
+          type: diagnostic_aggregator/GenericAnalyzer
+          path: Processor
+          contains: [ 'rocess' ]

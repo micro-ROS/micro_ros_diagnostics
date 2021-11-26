@@ -13,14 +13,13 @@
 # See the License for the specific language governing permissions and
 # limitations under the License.
 
-from launch import LaunchDescription
-from launch_ros.actions import Node
-from launch.actions import DeclareLaunchArgument
-from launch.actions import IncludeLaunchDescription
-from launch.substitutions import LaunchConfiguration
-from launch.launch_description_sources import PythonLaunchDescriptionSource
-from ament_index_python import get_package_share_directory
 import os
+
+from ament_index_python import get_package_share_directory
+from launch import LaunchDescription
+from launch.actions import IncludeLaunchDescription
+from launch.launch_description_sources import PythonLaunchDescriptionSource
+from launch.substitutions import LaunchConfiguration
 
 logger = LaunchConfiguration('log_level')
 
@@ -28,10 +27,10 @@ logger = LaunchConfiguration('log_level')
 def generate_launch_description():
 
     bridge_launch = os.path.join(get_package_share_directory(
-        "micro_ros_diagnostic_bridge"), "launch/diagnostic_bridge.launch.py")
+        'micro_ros_diagnostic_bridge'), 'launch/diagnostic_bridge.launch.py')
 
     lookup_table = os.path.join(get_package_share_directory(
-        "micro_ros_diagnostic_bridge"), "example_table.yaml")
+        'micro_ros_diagnostic_bridge'), 'example_table.yaml')
 
     example_bridge = IncludeLaunchDescription(
         PythonLaunchDescriptionSource(
