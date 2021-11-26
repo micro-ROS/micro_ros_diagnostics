@@ -6,7 +6,7 @@ if(NOT CMAKE_C_STANDARD)
   set(CMAKE_C_STANDARD 99)
 endif()
 
-# find dependencies
+# Find dependencies
 find_package(ament_cmake REQUIRED)
 find_package(micro_ros_diagnostic_msgs REQUIRED)
 find_package(rclc REQUIRED)
@@ -24,16 +24,20 @@ else()
   endif()
 endif()
 
-# build options
+# Build options
 option(MICRO_ROS_DIAGNOSTIC_UPDATER_EXAMPLES "Build example updaters for the micro-ROS diagnostic updater package." FALSE)
 
-# create library
+# Configuration
+set(MICRO_ROS_DIAGNOSTIC_UPDATER_MAX_TASKS_PER_UPDATER "5" CACHE STRING "Number of tasks preallocated per updater.")
+
+# Create library
 add_library(${PROJECT_NAME}
   src/micro_ros_diagnostic_updater/micro_ros_diagnostic_updater.c
 )
 target_include_directories(${PROJECT_NAME}
     PUBLIC
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/include>
+        $<BUILD_INTERFACE:${PROJECT_BINARY_DIR}/include>
         $<INSTALL_INTERFACE:include>
     PRIVATE
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src>
@@ -43,6 +47,10 @@ ament_target_dependencies(${PROJECT_NAME}
   rcutils
   micro_ros_diagnostic_msgs
 )
+
+# Create source files with the define
+configure_file(${PROJECT_SOURCE_DIR}/src/config.h.in
+  ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}/config.h)
 
 include_directories(include)
 
@@ -77,9 +85,17 @@ if(MICRO_ROS_DIAGNOSTIC_UPDATER_EXAMPLES)
   )
 endif()
 
-# install
+# Install
 install(DIRECTORY include/ DESTINATION include)
 install(TARGETS ${PROJECT_NAME} DESTINATION lib)
+
+# Install config.h file.
+install(
+  FILES
+    ${PROJECT_BINARY_DIR}/include/${PROJECT_NAME}/config.h
+  DESTINATION
+    include/${PROJECT_NAME}
+)
 
 ament_export_include_directories(include)
 ament_export_libraries(${PROJECT_NAME})
