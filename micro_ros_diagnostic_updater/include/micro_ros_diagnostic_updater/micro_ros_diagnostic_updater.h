@@ -19,8 +19,7 @@
 #include <rcl/types.h>
 #include <rclc/publisher.h>
 #include <micro_ros_diagnostic_msgs/msg/micro_ros_diagnostic_status.h>
-
-#define MICRO_ROS_UPDATER_MAX_NUMBER_OF_TASKS 5
+#include "micro_ros_diagnostic_updater/config.h"
 
 typedef struct diagnostic_value_t
 {
@@ -46,7 +45,7 @@ typedef struct diagnostic_updater_t
 {
   int16_t id;
   uint8_t num_tasks;
-  diagnostic_task_t * tasks[MICRO_ROS_UPDATER_MAX_NUMBER_OF_TASKS];
+  diagnostic_task_t * tasks[MICRO_ROS_DIAGNOSTIC_UPDATER_MAX_TASKS_PER_UPDATER];
   rcl_publisher_t diag_pub;
   micro_ros_diagnostic_msgs__msg__MicroROSDiagnosticStatus diag_status;
 } diagnostic_updater_t;

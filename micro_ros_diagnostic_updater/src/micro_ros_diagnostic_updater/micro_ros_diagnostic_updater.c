@@ -136,11 +136,11 @@ rclc_diagnostic_updater_add_task(
   RCL_CHECK_FOR_NULL_WITH_MSG(
     task, "task is a null pointer", return RCL_RET_INVALID_ARGUMENT);
 
-  if (updater->num_tasks >= MICRO_ROS_UPDATER_MAX_NUMBER_OF_TASKS) {
+  if (updater->num_tasks >= MICRO_ROS_DIAGNOSTIC_UPDATER_MAX_TASKS_PER_UPDATER) {
     RCUTILS_LOG_ERROR(
       "Updater could not add task %d, already %d tasks added.",
       task->id,
-      MICRO_ROS_UPDATER_MAX_NUMBER_OF_TASKS);
+      MICRO_ROS_DIAGNOSTIC_UPDATER_MAX_TASKS_PER_UPDATER);
     return RCL_RET_ERROR;
   }
   updater->tasks[updater->num_tasks] = task;

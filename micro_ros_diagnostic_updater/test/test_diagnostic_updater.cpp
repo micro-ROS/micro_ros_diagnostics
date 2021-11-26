@@ -132,7 +132,7 @@ TEST(TestDiagnosticUpdater, updater_add_tasks) {
   rc = rclc_diagnostic_updater_add_task(&updater, &task);
   EXPECT_EQ(RCL_RET_OK, rc);
 
-  for (unsigned int i = 1; i < MICRO_ROS_UPDATER_MAX_NUMBER_OF_TASKS; ++i) {
+  for (unsigned int i = 1; i < MICRO_ROS_DIAGNOSTIC_UPDATER_MAX_TASKS_PER_UPDATER; ++i) {
     rc = rclc_diagnostic_updater_add_task(&updater, &task);
     EXPECT_EQ(RCL_RET_OK, rc);
   }
