@@ -81,7 +81,6 @@ rclc_diagnostic_updater_init(
 
   // publisher
   updater->diag_pub = rcl_get_zero_initialized_publisher();
-  const char * topic_name = "/diagnostics_uros";
   const rosidl_message_type_support_t * diag_type_support =
     ROSIDL_GET_MSG_TYPE_SUPPORT(
     micro_ros_diagnostic_msgs,
@@ -91,12 +90,12 @@ rclc_diagnostic_updater_init(
     &updater->diag_pub,
     node,
     diag_type_support,
-    topic_name);
+    UROS_DIAGNOSTIC_UPDATER_TOPIC);
   if (RCL_RET_OK != rc) {
     RCUTILS_LOG_ERROR(
       "Updater '%d' could not create publisher /%s.",
       updater->id,
-      topic_name);
+      UROS_DIAGNOSTIC_UPDATER_TOPIC);
     return RCL_RET_ERROR;
   }
 
