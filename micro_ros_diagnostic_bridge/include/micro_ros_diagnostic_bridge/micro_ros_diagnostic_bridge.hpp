@@ -27,8 +27,8 @@
 #include "micro_ros_diagnostic_msgs/msg/micro_ros_diagnostic_status.hpp"
 
 
-static const char UROS_DIAGNOSTICS_BRIDGE_TOPIC_IN[] = "/diagnostics_uros";
-static const char UROS_DIAGNOSTICS_BRIDGE_TOPIC_OUT[] = "/diagnostics";
+static const char UROS_DIAGNOSTICS_BRIDGE_TOPIC_IN[] = "diagnostics_uros";
+static const char UROS_DIAGNOSTICS_BRIDGE_TOPIC_OUT[] = "diagnostics";
 
 namespace uros_diagnostic_msg = micro_ros_diagnostic_msgs::msg;
 namespace diagnostic_msg = diagnostic_msgs::msg;
