@@ -32,13 +32,13 @@ def generate_launch_description():
             default_value=['info'],
             description='Logging level'),
         launch.actions.DeclareLaunchArgument(
-            'remap_diagnostics_uros',
+            'input_topic',
             default_value=['diagnostics_uros'],
-            description='Namespace for diagnostics uros topic'),
+            description='Remap for input topic'),
         launch.actions.DeclareLaunchArgument(
-            'remap_diagnostics',
+            'output_topic',
             default_value=['diagnostics'],
-            description='Remap for diagnostics topic'),
+            description='Remap for output topic'),
         launch.actions.DeclareLaunchArgument(
             'namespace',
             default_value=[''],
@@ -49,8 +49,8 @@ def generate_launch_description():
             namespace=LaunchConfiguration('namespace'),
             parameters=[{'lookup_table': LaunchConfiguration('lookup_table')}],
             remappings=[
-                ('diagnostics_uros', LaunchConfiguration('remap_diagnostics_uros')),
-                ('diagnostics', LaunchConfiguration('remap_diagnostics'))
+                ('diagnostics_uros', LaunchConfiguration('input_topic')),
+                ('diagnostics', LaunchConfiguration('output_topic'))
             ],
             output='screen',
             arguments=['--ros-args', '--log-level', logger])
