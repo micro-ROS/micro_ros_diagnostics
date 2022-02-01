@@ -2,10 +2,13 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>micro_ros_common_diagnostics</name>
-  <version>0.2.0</version>
+  <version>0.3.0</version>
   <description>Common microcontroller-specific diagnostics and monitors.</description>
-  <maintainer email="arne.nordmann@de.bosch.com">Arne Nordmann</maintainer>
+  <maintainer email="bjv@capra.ooo">Bartolome Jimenez Vera</maintainer>
+
   <license>Apache License 2.0</license>
+
+  <author email="arne.nordmann@de.bosch.com">Arne Nordmann</maintainer>
 
   <buildtool_depend>ament_cmake</buildtool_depend>
 
