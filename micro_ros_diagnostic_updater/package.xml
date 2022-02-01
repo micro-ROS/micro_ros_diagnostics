@@ -2,9 +2,9 @@
 <?xml-model href="http://download.ros.org/schema/package_format3.xsd" schematypens="http://www.w3.org/2001/XMLSchema"?>
 <package format="3">
   <name>micro_ros_diagnostic_updater</name>
-  <version>0.2.0</version>
-  <description>rclc convenience methods for diagnostic updaters.</description>
-  <maintainer email="arne.nordmann@de.bosch.com">Arne Nordmann</maintainer>
+  <version>0.3.0</version>
+  <description>Diagnostic updaters for micro-ROS.</description>
+  <maintainer email="bjv@capra.ooo">Bartolome Jimenez Vera</maintainer>
 
   <license>Apache License 2.0</license>
 
