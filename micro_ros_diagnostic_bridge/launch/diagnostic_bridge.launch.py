@@ -31,10 +31,27 @@ def generate_launch_description():
             'log_level',
             default_value=['info'],
             description='Logging level'),
+        launch.actions.DeclareLaunchArgument(
+            'input_topic',
+            default_value=['diagnostics_uros'],
+            description='Remap for input topic'),
+        launch.actions.DeclareLaunchArgument(
+            'output_topic',
+            default_value=['diagnostics'],
+            description='Remap for output topic'),
+        launch.actions.DeclareLaunchArgument(
+            'namespace',
+            default_value=[''],
+            description='Namespace'),
         launch_ros.actions.Node(
             package='micro_ros_diagnostic_bridge',
             executable='diagnostic_bridge',
+            namespace=LaunchConfiguration('namespace'),
             parameters=[{'lookup_table': LaunchConfiguration('lookup_table')}],
+            remappings=[
+                ('diagnostics_uros', LaunchConfiguration('input_topic')),
+                ('diagnostics', LaunchConfiguration('output_topic'))
+            ],
             output='screen',
             arguments=['--ros-args', '--log-level', logger])
-        ])
+    ])
