@@ -19,8 +19,6 @@ The micro-ROS diagnostics packages do not provide any aggregator as we assume th
 
 In order for the standard ROS 2 diagnostic aggregator to aggregate micro-ROS diagnostic message types, the ROS 2 bridge translates micro-ROS diagnostic messages to standard ROS 2 diagnostic messages.
 
-For further information, please contact [Arne Nordmann](https://github.com/norro) or [Ralph Lange](https://github.com/ralph-lange).
-
 ## Purpose of the Project
 
 This software is not ready for production use. It has neither been developed nor
