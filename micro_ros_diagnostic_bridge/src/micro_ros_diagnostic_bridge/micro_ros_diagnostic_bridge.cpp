@@ -56,24 +56,30 @@ MicroROSDiagnosticBridge::MicroROSDiagnosticBridge(const std::string & path)
       msg_out_->message = updater.description;
       msg_out_->level = msg_in->level;
 
-      diagnostic_msgs::msg::KeyValue keyvalue;
-      RCLCPP_DEBUG(get_logger(), "Bridging updater %d, task %d", msg_in->updater_id, msg_in->key);
-      keyvalue.key = lookup_key(msg_in->updater_id, msg_in->key);
-      switch (msg_in->value_type) {
-        case micro_ros_diagnostic_msgs::msg::MicroROSDiagnosticStatus::VALUE_BOOL:
-          keyvalue.value = std::to_string(msg_in->bool_value);
-          break;
-        case micro_ros_diagnostic_msgs::msg::MicroROSDiagnosticStatus::VALUE_INT:
-          keyvalue.value = std::to_string(msg_in->int_value);
-          break;
-        case micro_ros_diagnostic_msgs::msg::MicroROSDiagnosticStatus::VALUE_DOUBLE:
-          keyvalue.value = std::to_string(msg_in->double_value);
-          break;
-        case micro_ros_diagnostic_msgs::msg::MicroROSDiagnosticStatus::VALUE_LOOKUP:
-          keyvalue.value = lookup_value(msg_in->updater_id, msg_in->key, msg_in->value_id);
-          break;
+      for (size_t value_index = 0; value_index < msg_in->number_of_key_values; value_index++) {
+        diagnostic_msgs::msg::KeyValue keyvalue;
+        RCLCPP_DEBUG(
+          get_logger(), "Bridging updater %d, key %d", msg_in->updater_id,
+          msg_in->key_values[value_index].key);
+        keyvalue.key = lookup_key(msg_in->updater_id, msg_in->key_values[value_index].key);
+        switch (msg_in->key_values[value_index].value_type) {
+          case micro_ros_diagnostic_msgs::msg::MicroROSDiagnosticStatus::VALUE_BOOL:
+            keyvalue.value = std::to_string(msg_in->key_values[value_index].bool_value);
+            break;
+          case micro_ros_diagnostic_msgs::msg::MicroROSDiagnosticStatus::VALUE_INT:
+            keyvalue.value = std::to_string(msg_in->key_values[value_index].int_value);
+            break;
+          case micro_ros_diagnostic_msgs::msg::MicroROSDiagnosticStatus::VALUE_DOUBLE:
+            keyvalue.value = std::to_string(msg_in->key_values[value_index].double_value);
+            break;
+          case micro_ros_diagnostic_msgs::msg::MicroROSDiagnosticStatus::VALUE_LOOKUP:
+            keyvalue.value = lookup_value(
+              msg_in->updater_id, msg_in->key_values[value_index].key,
+              msg_in->key_values[value_index].value_id);
+            break;
+        }
+        msg_out_->values.push_back(keyvalue);
       }
-      msg_out_->values.push_back(keyvalue);
 
       ros2_pub_->publish(std::move(msg_out_));
     };

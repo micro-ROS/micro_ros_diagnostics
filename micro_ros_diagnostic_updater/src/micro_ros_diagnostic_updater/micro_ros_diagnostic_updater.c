@@ -177,7 +177,8 @@ rclc_diagnostic_updater_update(
       for (uint8_t value_index = 0u; value_index < updater->tasks[i]->number_of_key_values;
         value_index++)
       {
-        updater->diag_status.key_values[value_index].key = updater->tasks[i]->id;
+        updater->diag_status.key_values[value_index].key =
+          updater->tasks[i]->key_values[value_index].key;
         updater->diag_status.key_values[value_index].value_type =
           updater->tasks[i]->key_values[value_index].value_type;
         updater->diag_status.key_values[value_index].bool_value =
