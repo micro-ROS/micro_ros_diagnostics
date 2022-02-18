@@ -152,7 +152,7 @@ rcl_ret_t
 rclc_diagnostic_call_task(
   diagnostic_task_t * task)
 {
-  return (task->function)(&task->value);
+  return (task->function)(task->key_values);
 }
 
 rcl_ret_t
@@ -165,17 +165,32 @@ rclc_diagnostic_updater_update(
   for (unsigned int i = 0; i < updater->num_tasks; ++i) {
     rcl_ret_t task_ok = rclc_diagnostic_call_task(updater->tasks[i]);
 
-    if (task_ok == RCL_RET_OK) {
+    if ( (task_ok == RCL_RET_OK) &&
+      (updater->tasks[i]->number_of_key_values <=
+      MICRO_ROS_DIAGNOSTIC_UPDATER_MAX_KEY_VALUES_PER_TASK) )
+    {
       // name
       updater->diag_status.updater_id = updater->tasks[i]->updater_id;
-      updater->diag_status.key = updater->tasks[i]->id;
       updater->diag_status.hardware_id = updater->tasks[i]->hardware_id;
-      updater->diag_status.value_type = updater->tasks[i]->value.value_type;
-      updater->diag_status.bool_value = updater->tasks[i]->value.bool_value;
-      updater->diag_status.int_value = updater->tasks[i]->value.int_value;
-      updater->diag_status.double_value = updater->tasks[i]->value.double_value;
-      updater->diag_status.value_id = updater->tasks[i]->value.value_id;
-      updater->diag_status.level = updater->tasks[i]->value.level;
+      updater->diag_status.number_of_key_values = updater->tasks[i]->number_of_key_values;
+
+      for (uint8_t value_index = 0u; value_index < updater->tasks[i]->number_of_key_values;
+        value_index++)
+      {
+        updater->diag_status.key_values[value_index].key = updater->tasks[i]->id;
+        updater->diag_status.key_values[value_index].value_type =
+          updater->tasks[i]->key_values[value_index].value_type;
+        updater->diag_status.key_values[value_index].bool_value =
+          updater->tasks[i]->key_values[value_index].bool_value;
+        updater->diag_status.key_values[value_index].int_value =
+          updater->tasks[i]->key_values[value_index].int_value;
+        updater->diag_status.key_values[value_index].double_value =
+          updater->tasks[i]->key_values[value_index].double_value;
+        updater->diag_status.key_values[value_index].value_id =
+          updater->tasks[i]->key_values[value_index].value_id;
+        updater->diag_status.key_values[value_index].level =
+          updater->tasks[i]->key_values[value_index].level;
+      }
 
       rcl_ret_t rc = rcl_publish(&updater->diag_pub, &updater->diag_status, NULL);
       if (rc == RCL_RET_OK) {
