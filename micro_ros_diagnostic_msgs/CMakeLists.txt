@@ -14,7 +14,14 @@ find_package(ament_cmake REQUIRED)
 find_package(rosidl_default_generators REQUIRED)
 find_package(std_msgs REQUIRED)
 
+# Configuration
+set(MICRO_ROS_DIAGNOSTIC_MSGS_MAX_KEY_VALUES "4" CACHE STRING "Number of key values pre allocated per message.")
+
+configure_file(${PROJECT_SOURCE_DIR}/template-msg/MicroROSDiagnosticStatus.msg.in
+  ${PROJECT_SOURCE_DIR}/msg/MicroROSDiagnosticStatus.msg)
+
 set(msg_files
+  "msg/MicroROSDiagnosticKeyValue.msg"
   "msg/MicroROSDiagnosticStatus.msg"
 )
 set(srv_files

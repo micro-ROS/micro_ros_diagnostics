@@ -26,11 +26,5 @@ uint16 updater_id
 # A hardware unique string.
 uint16 hardware_id
 
-# What key, value is transmitted.
-uint16 key
-
-byte value_type
-bool bool_value
-int32 int_value
-float32 double_value
-uint16 value_id
+uint8 number_of_key_values
+micro_ros_diagnostic_msgs/MicroROSDiagnosticKeyValue[@MICRO_ROS_DIAGNOSTIC_MSGS_MAX_KEY_VALUES@] key_values
