@@ -1,4 +1,4 @@
-name: "Build + Coverage"
+name: "Build + Coverage - Galactic"
 
 on:
   push:
@@ -15,8 +15,8 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ ubuntu-22.04 ]
-        ros_distribution: [ rolling ]
+        os: [ ubuntu-20.04 ]
+        ros_distribution: [ foxy, galactic ]
     steps:
     - uses: actions/checkout@v2.3.4
     - uses: ros-tooling/setup-ros@v0.2
