@@ -52,7 +52,7 @@ rclc_diagnostic_task_init(
   int16_t hardware_id,
   int16_t updater_id,
   int16_t id,
-  rcl_ret_t (* function)(diagnostic_value_t *))
+  rcl_ret_t (* function)(diagnostic_value_t[MICRO_ROS_DIAGNOSTIC_UPDATER_MAX_KEY_VALUES_PER_TASK], uint8_t * number_of_key_values))
 {
   RCL_CHECK_FOR_NULL_WITH_MSG(
     task, "task is a null pointer", return RCL_RET_INVALID_ARGUMENT);
@@ -152,7 +152,7 @@ rcl_ret_t
 rclc_diagnostic_call_task(
   diagnostic_task_t * task)
 {
-  return (task->function)(task->key_values);
+  return (task->function)(task->key_values, &task->number_of_key_values);
 }
 
 rcl_ret_t
