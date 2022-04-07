@@ -52,7 +52,9 @@ rclc_diagnostic_task_init(
   int16_t hardware_id,
   int16_t updater_id,
   int16_t id,
-  rcl_ret_t (* function)(diagnostic_value_t[MICRO_ROS_DIAGNOSTIC_UPDATER_MAX_KEY_VALUES_PER_TASK], uint8_t * number_of_key_values))
+  rcl_ret_t (* function)(
+    diagnostic_value_t[MICRO_ROS_DIAGNOSTIC_UPDATER_MAX_KEY_VALUES_PER_TASK],
+    uint8_t * number_of_key_values))
 {
   RCL_CHECK_FOR_NULL_WITH_MSG(
     task, "task is a null pointer", return RCL_RET_INVALID_ARGUMENT);
@@ -80,7 +82,6 @@ rclc_diagnostic_updater_init(
   updater->num_tasks = 0;
 
   // publisher
-  updater->diag_pub = rcl_get_zero_initialized_publisher();
   const rosidl_message_type_support_t * diag_type_support =
     ROSIDL_GET_MSG_TYPE_SUPPORT(
     micro_ros_diagnostic_msgs,

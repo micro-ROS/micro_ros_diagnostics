@@ -41,59 +41,63 @@ typedef struct diagnostic_task_t
   diagnostic_value_t key_values[MICRO_ROS_DIAGNOSTIC_UPDATER_MAX_KEY_VALUES_PER_TASK];
   int16_t hardware_id;
   int16_t updater_id;
-  rcl_ret_t (*function)(diagnostic_value_t[MICRO_ROS_DIAGNOSTIC_UPDATER_MAX_KEY_VALUES_PER_TASK], uint8_t *number_of_key_values);
+  rcl_ret_t (* function)(
+    diagnostic_value_t[MICRO_ROS_DIAGNOSTIC_UPDATER_MAX_KEY_VALUES_PER_TASK],
+    uint8_t * number_of_key_values);
 } diagnostic_task_t;
 
 typedef struct diagnostic_updater_t
 {
   int16_t id;
   uint8_t num_tasks;
-  diagnostic_task_t *tasks[MICRO_ROS_DIAGNOSTIC_UPDATER_MAX_TASKS_PER_UPDATER];
+  diagnostic_task_t * tasks[MICRO_ROS_DIAGNOSTIC_UPDATER_MAX_TASKS_PER_UPDATER];
   rcl_publisher_t diag_pub;
   micro_ros_diagnostic_msgs__msg__MicroROSDiagnosticStatus diag_status;
 } diagnostic_updater_t;
 
 void rclc_diagnostic_value_set_int(
-    diagnostic_value_t *kv,
-    int32_t value);
+  diagnostic_value_t * kv,
+  int32_t value);
 
 void rclc_diagnostic_value_lookup(
-    diagnostic_value_t *kv,
-    int16_t value_id);
+  diagnostic_value_t * kv,
+  int16_t value_id);
 
 void rclc_diagnostic_value_set_level(
-    diagnostic_value_t *kv,
-    int8_t level);
+  diagnostic_value_t * kv,
+  int8_t level);
 
 rcl_ret_t
 rclc_diagnostic_task_init(
-    diagnostic_task_t *task,
-    int16_t hardware_id,
-    int16_t updater_id,
-    int16_t id,
-    rcl_ret_t (*function)(diagnostic_value_t[MICRO_ROS_DIAGNOSTIC_UPDATER_MAX_KEY_VALUES_PER_TASK], uint8_t *number_of_key_values));
+  diagnostic_task_t * task,
+  int16_t hardware_id,
+  int16_t updater_id,
+  int16_t id,
+  rcl_ret_t (* function)(
+    diagnostic_value_t[MICRO_ROS_DIAGNOSTIC_UPDATER_MAX_KEY_VALUES_PER_TASK],
+    uint8_t * number_of_key_values));
 
 rcl_ret_t
 rclc_diagnostic_updater_init(
-    diagnostic_updater_t *updater,
-    const rcl_node_t *node);
+  diagnostic_updater_t * updater,
+  const rcl_node_t * node);
 
 rcl_ret_t
 rclc_diagnostic_updater_fini(
-    diagnostic_updater_t *updater,
-    rcl_node_t *node);
+  diagnostic_updater_t * updater,
+  rcl_node_t * node);
 
 rcl_ret_t
 rclc_diagnostic_updater_add_task(
-    diagnostic_updater_t *updater,
-    diagnostic_task_t *task);
+  diagnostic_updater_t * updater,
+  diagnostic_task_t * task);
 
 rcl_ret_t
 rclc_diagnostic_call_task(
-    diagnostic_task_t *task);
+  diagnostic_task_t * task);
 
 rcl_ret_t
 rclc_diagnostic_updater_update(
-    diagnostic_updater_t *updater);
+  diagnostic_updater_t * updater);
 
 #endif // MICRO_ROS_DIAGNOSTIC_UPDATER__MICRO_ROS_DIAGNOSTIC_UPDATER_H_
