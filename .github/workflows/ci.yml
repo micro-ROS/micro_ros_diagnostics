@@ -16,16 +16,25 @@ jobs:
       fail-fast: false
       matrix:
         os: [ ubuntu-20.04 ]
-        ros_distribution: [ foxy, galactic, rolling ]
+        ros_distribution: [ rolling ]
+        include:
+          - docker_image: ubuntu:jammy
+            ros_distribution: rolling
+    container:
+      image: ${{ matrix.docker_image }}
     steps:
-    - uses: actions/checkout@v2.3.4
-    - uses: ros-tooling/setup-ros@v0.2
+    - uses: actions/checkout@v2
+    - uses: ros-tooling/setup-ros@0.3.0
       with:
+        use-ros2-testing: true
         required-ros-distributions: ${{ matrix.ros_distribution }}
-    - uses : ros-tooling/action-ros-ci@v0.2
+    - name : Download and install dependencies
+      run: |
+        apt-get install ros-${{ matrix.ros_distribution }}-rclc
+    - uses : ros-tooling/action-ros-ci@0.2.4
       with:
-        target-ros2-distro: ${{ matrix.ros_distribution }}
         package-name: "micro_ros_diagnostic_msgs micro_ros_diagnostic_updater micro_ros_common_diagnostics"
+        target-ros2-distro: ${{ matrix.ros_distribution }}
         colcon-defaults: |
           {
             "build": {
