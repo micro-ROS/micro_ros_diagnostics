@@ -30,37 +30,39 @@ static const int16_t PROCESSOR_TEMPERATURE_TASK_ID = 0;
 static const int16_t PROCESSOR_LOAD_TASK_ID = 1;
 
 rcl_ret_t
-my_diagnostic_temperature(diagnostic_value_t * temp_kv)
+my_diagnostic_temperature(diagnostic_value_t * values, uint8_t * number_of_key_values)
 {
+  *number_of_key_values = 1;
   // Fake a temperature
   ++my_diagnostic_temp;
   if (my_diagnostic_temp > 99) {
     my_diagnostic_temp -= 0;
   }
-  rclc_diagnostic_value_set_int(temp_kv, my_diagnostic_temp);
+  rclc_diagnostic_value_set_int(&values[0], my_diagnostic_temp);
 
   // Calculate the diagnostic level
   if (my_diagnostic_temp > 85) {
-    rclc_diagnostic_value_set_level(temp_kv, 2);
+    rclc_diagnostic_value_set_level(&values[0], 2);
   } else if (my_diagnostic_temp > 75) {
-    rclc_diagnostic_value_set_level(temp_kv, 1);
+    rclc_diagnostic_value_set_level(&values[0], 1);
   } else {
-    rclc_diagnostic_value_set_level(temp_kv, 0);
+    rclc_diagnostic_value_set_level(&values[0], 0);
   }
   return RCL_RET_OK;
 }
 
 rcl_ret_t
-my_diagnostic_load(diagnostic_value_t * load_kv)
+my_diagnostic_load(diagnostic_value_t * values, uint8_t * number_of_key_values)
 {
+  *number_of_key_values = 1;
   // Fake a processor load
-  rclc_diagnostic_value_set_int(load_kv, my_diagnostic_temp / 2);
+  rclc_diagnostic_value_set_int(&values[0], my_diagnostic_temp / 2);
 
   // Calculate the diagnostic level
   if (my_diagnostic_temp > 46) {
-    rclc_diagnostic_value_set_level(load_kv, 1);
+    rclc_diagnostic_value_set_level(&values[0], 1);
   } else {
-    rclc_diagnostic_value_set_level(load_kv, 0);
+    rclc_diagnostic_value_set_level(&values[0], 0);
   }
   return RCL_RET_OK;
 }

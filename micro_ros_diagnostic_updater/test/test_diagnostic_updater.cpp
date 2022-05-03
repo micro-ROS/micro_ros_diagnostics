@@ -28,24 +28,29 @@ static int diagnostic_mockup_counter_0 = 0;
 static int diagnostic_mockup_counter_1 = 0;
 
 rcl_ret_t
-update_function_mockup_0(diagnostic_value_t * kv, uint8_t number_of_key_values)
+update_function_mockup_0(diagnostic_value_t * values, uint8_t * number_of_key_values)
 {
   ++diagnostic_mockup_counter_0;
-  rclc_diagnostic_value_set_int(kv, 17);
+
+  *number_of_key_values = 1;
+
+  rclc_diagnostic_value_set_int(&values[0], 17);
   rclc_diagnostic_value_set_level(
-    kv,
+    &values[0],
     micro_ros_diagnostic_msgs__msg__MicroROSDiagnosticStatus__OK);
 
   return RCL_RET_OK;
 }
 
 rcl_ret_t
-update_function_mockup_1(diagnostic_value_t * kv, uint8_t number_of_key_values)
+update_function_mockup_1(diagnostic_value_t * values, uint8_t * number_of_key_values)
 {
   ++diagnostic_mockup_counter_1;
-  rclc_diagnostic_value_set_int(kv, 42);
+
+  *number_of_key_values = 1;
+  rclc_diagnostic_value_set_int(&values[0], 42);
   rclc_diagnostic_value_set_level(
-    kv,
+    &values[0],
     micro_ros_diagnostic_msgs__msg__MicroROSDiagnosticStatus__STALE);
 
   return RCL_RET_OK;

@@ -221,7 +221,7 @@ MicroROSDiagnosticBridge::read_lookup_table(const std::string & path)
           auto start = updater_key.length() + 6;
           pos = p.get_name().find('.', start);
           key = p.get_name().substr(start, pos - start);
-          RCLCPP_DEBUG(get_logger(), "Updater key position: %d, key: %s", pos, key.c_str());
+          RCLCPP_DEBUG(get_logger(), "Updater key position: %ld, key: %s", pos, key.c_str());
         }
         if (p.get_name().compare(updater_key + ".keys." + key + ".name") == 0) {
           key_name = p.value_to_string();
