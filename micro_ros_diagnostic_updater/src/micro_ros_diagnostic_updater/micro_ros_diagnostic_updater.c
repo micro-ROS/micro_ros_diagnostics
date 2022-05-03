@@ -119,6 +119,11 @@ rclc_diagnostic_updater_fini(
   RCL_CHECK_FOR_NULL_WITH_MSG(
     updater, "updater is a null pointer", return RCL_RET_INVALID_ARGUMENT);
 
+  // fini methods use free(), as the data is static, can't be "freed"
+  updater->diag_status.key_values.data = NULL;
+  updater->diag_status.key_values.capacity = 0;
+  updater->diag_status.key_values.size = 0;
+
   micro_ros_diagnostic_msgs__msg__MicroROSDiagnosticStatus__fini(&updater->diag_status);
 
   rcl_ret_t rc = rcl_publisher_fini(&updater->diag_pub, node);

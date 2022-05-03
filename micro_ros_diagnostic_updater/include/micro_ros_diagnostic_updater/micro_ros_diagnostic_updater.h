@@ -100,4 +100,4 @@ rcl_ret_t
 rclc_diagnostic_updater_update(
   diagnostic_updater_t * updater);
 
-#endif // MICRO_ROS_DIAGNOSTIC_UPDATER__MICRO_ROS_DIAGNOSTIC_UPDATER_H_
+#endif  // MICRO_ROS_DIAGNOSTIC_UPDATER__MICRO_ROS_DIAGNOSTIC_UPDATER_H_
