@@ -66,26 +66,26 @@ MicroROSDiagnosticBridge::MicroROSDiagnosticBridge(const std::string & path)
       status_msg.message = updater.description;
       status_msg.level = msg_in->level;
       RCLCPP_DEBUG(get_logger(), "Updater %s HW %s", updater.name.c_str(), hardware.c_str());
-      for (size_t value_index = 0; value_index < msg_in->number_of_key_values; value_index++) {
+      for (size_t value_index = 0; value_index < msg_in->number_of_values; value_index++) {
         diagnostic_msgs::msg::KeyValue keyvalue;
         RCLCPP_DEBUG(
           get_logger(), "Bridging updater %d, key %d", msg_in->updater_id,
-          msg_in->key_values[value_index].key);
-        keyvalue.key = lookup_key(msg_in->updater_id, msg_in->key_values[value_index].key);
-        switch (msg_in->key_values[value_index].value_type) {
+          msg_in->values[value_index].key);
+        keyvalue.key = lookup_key(msg_in->updater_id, msg_in->values[value_index].key);
+        switch (msg_in->values[value_index].value_type) {
           case MicroROSDiagnosticStatus::VALUE_BOOL:
-            keyvalue.value = std::to_string(msg_in->key_values[value_index].bool_value);
+            keyvalue.value = std::to_string(msg_in->values[value_index].bool_value);
             break;
           case MicroROSDiagnosticStatus::VALUE_INT:
-            keyvalue.value = std::to_string(msg_in->key_values[value_index].int_value);
+            keyvalue.value = std::to_string(msg_in->values[value_index].int_value);
             break;
           case MicroROSDiagnosticStatus::VALUE_DOUBLE:
-            keyvalue.value = std::to_string(msg_in->key_values[value_index].double_value);
+            keyvalue.value = std::to_string(msg_in->values[value_index].double_value);
             break;
           case MicroROSDiagnosticStatus::VALUE_LOOKUP:
             keyvalue.value = lookup_value(
-              msg_in->updater_id, msg_in->key_values[value_index].key,
-              msg_in->key_values[value_index].value_id);
+              msg_in->updater_id, msg_in->values[value_index].key,
+              msg_in->values[value_index].value_id);
             break;
         }
         status_msg.values.push_back(keyvalue);

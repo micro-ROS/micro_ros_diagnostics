@@ -28,11 +28,11 @@ static int diagnostic_mockup_counter_0 = 0;
 static int diagnostic_mockup_counter_1 = 0;
 
 rcl_ret_t
-update_function_mockup_0(diagnostic_value_t * values, uint8_t * number_of_key_values)
+update_function_mockup_0(diagnostic_value_t * values, uint8_t * number_of_values)
 {
   ++diagnostic_mockup_counter_0;
 
-  *number_of_key_values = 1;
+  *number_of_values = 1;
 
   rclc_diagnostic_value_set_int(&values[0], 17);
   rclc_diagnostic_value_set_level(
@@ -43,11 +43,11 @@ update_function_mockup_0(diagnostic_value_t * values, uint8_t * number_of_key_va
 }
 
 rcl_ret_t
-update_function_mockup_1(diagnostic_value_t * values, uint8_t * number_of_key_values)
+update_function_mockup_1(diagnostic_value_t * values, uint8_t * number_of_values)
 {
   ++diagnostic_mockup_counter_1;
 
-  *number_of_key_values = 1;
+  *number_of_values = 1;
   rclc_diagnostic_value_set_int(&values[0], 42);
   rclc_diagnostic_value_set_level(
     &values[0],

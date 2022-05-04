@@ -75,7 +75,7 @@ rclc_diagnostic_task_init(
   int16_t id,
   rcl_ret_t (* function)(
     diagnostic_value_t[MICRO_ROS_DIAGNOSTIC_UPDATER_MAX_VALUES_PER_TASK],
-    uint8_t * number_of_key_values));
+    uint8_t * number_of_values));
 
 rcl_ret_t
 rclc_diagnostic_updater_init(

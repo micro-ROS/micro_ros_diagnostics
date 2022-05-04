@@ -30,9 +30,9 @@ static const int16_t PROCESSOR_TEMPERATURE_TASK_ID = 0;
 static const int16_t PROCESSOR_LOAD_TASK_ID = 1;
 
 rcl_ret_t
-my_diagnostic_temperature(diagnostic_value_t * values, uint8_t * number_of_key_values)
+my_diagnostic_temperature(diagnostic_value_t * values, uint8_t * number_of_values)
 {
-  *number_of_key_values = 1;
+  *number_of_values = 1;
   // Fake a temperature
   ++my_diagnostic_temp;
   if (my_diagnostic_temp > 99) {
@@ -52,9 +52,9 @@ my_diagnostic_temperature(diagnostic_value_t * values, uint8_t * number_of_key_v
 }
 
 rcl_ret_t
-my_diagnostic_load(diagnostic_value_t * values, uint8_t * number_of_key_values)
+my_diagnostic_load(diagnostic_value_t * values, uint8_t * number_of_values)
 {
-  *number_of_key_values = 1;
+  *number_of_values = 1;
   // Fake a processor load
   rclc_diagnostic_value_set_int(&values[0], my_diagnostic_temp / 2);
 
