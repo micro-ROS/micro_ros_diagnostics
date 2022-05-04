@@ -30,7 +30,7 @@ option(MICRO_ROS_DIAGNOSTIC_UPDATER_EXAMPLES "Build example updaters for the mic
 # Configuration
 set(MICRO_ROS_DIAGNOSTIC_UPDATER_MAX_TASKS_PER_UPDATER "5" CACHE STRING "Number of tasks preallocated per updater.")
 set(MICRO_ROS_DIAGNOSTIC_UPDATER_DIAGNOSTICS_TOPIC_PREFIX "" CACHE STRING "Prefix for micro-ROS diagnostic topic (append slash '/')")
-set(MICRO_ROS_DIAGNOSTIC_UPDATER_MAX_KEY_VALUES_PER_TASK "4" CACHE STRING "Number of pre allocated key_values.")
+set(MICRO_ROS_DIAGNOSTIC_UPDATER_MAX_VALUES_PER_TASK "4" CACHE STRING "Number of pre allocated key value pairs.")
 
 # Create library
 add_library(${PROJECT_NAME}

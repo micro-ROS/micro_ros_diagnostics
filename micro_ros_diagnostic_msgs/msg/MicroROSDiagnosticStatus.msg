@@ -26,5 +26,5 @@ uint16 updater_id
 # A hardware unique string.
 uint16 hardware_id
 
-uint8 number_of_key_values
-micro_ros_diagnostic_msgs/MicroROSDiagnosticKeyValue[] key_values
+uint8 number_of_values
+micro_ros_diagnostic_msgs/MicroROSDiagnosticKeyValue[] values

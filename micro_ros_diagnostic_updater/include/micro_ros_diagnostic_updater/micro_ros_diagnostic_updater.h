@@ -37,13 +37,13 @@ typedef struct diagnostic_value_t
 typedef struct diagnostic_task_t
 {
   int16_t id;
-  uint8_t number_of_key_values;
-  diagnostic_value_t key_values[MICRO_ROS_DIAGNOSTIC_UPDATER_MAX_KEY_VALUES_PER_TASK];
+  uint8_t number_of_values;
+  diagnostic_value_t values[MICRO_ROS_DIAGNOSTIC_UPDATER_MAX_VALUES_PER_TASK];
   int16_t hardware_id;
   int16_t updater_id;
   rcl_ret_t (* function)(
-    diagnostic_value_t[MICRO_ROS_DIAGNOSTIC_UPDATER_MAX_KEY_VALUES_PER_TASK],
-    uint8_t * number_of_key_values);
+    diagnostic_value_t[MICRO_ROS_DIAGNOSTIC_UPDATER_MAX_VALUES_PER_TASK],
+    uint8_t * number_of_values);
 } diagnostic_task_t;
 
 typedef struct diagnostic_updater_t
@@ -74,7 +74,7 @@ rclc_diagnostic_task_init(
   int16_t updater_id,
   int16_t id,
   rcl_ret_t (* function)(
-    diagnostic_value_t[MICRO_ROS_DIAGNOSTIC_UPDATER_MAX_KEY_VALUES_PER_TASK],
+    diagnostic_value_t[MICRO_ROS_DIAGNOSTIC_UPDATER_MAX_VALUES_PER_TASK],
     uint8_t * number_of_key_values));
 
 rcl_ret_t

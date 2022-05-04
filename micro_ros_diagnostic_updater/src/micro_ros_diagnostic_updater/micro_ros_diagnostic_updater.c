@@ -20,7 +20,7 @@
 #include <micro_ros_diagnostic_msgs/msg/micro_ros_diagnostic_status.h>
 
 static micro_ros_diagnostic_msgs__msg__MicroROSDiagnosticKeyValue key_value_buffer[
-  MICRO_ROS_DIAGNOSTIC_UPDATER_MAX_KEY_VALUES_PER_TASK];
+  MICRO_ROS_DIAGNOSTIC_UPDATER_MAX_VALUES_PER_TASK];
 
 void
 rclc_diagnostic_value_set_int(
@@ -55,8 +55,8 @@ rclc_diagnostic_task_init(
   int16_t updater_id,
   int16_t id,
   rcl_ret_t (* function)(
-    diagnostic_value_t[MICRO_ROS_DIAGNOSTIC_UPDATER_MAX_KEY_VALUES_PER_TASK],
-    uint8_t * number_of_key_values))
+    diagnostic_value_t[MICRO_ROS_DIAGNOSTIC_UPDATER_MAX_VALUES_PER_TASK],
+    uint8_t * number_of_values))
 {
   RCL_CHECK_FOR_NULL_WITH_MSG(
     task, "task is a null pointer", return RCL_RET_INVALID_ARGUMENT);
@@ -104,9 +104,9 @@ rclc_diagnostic_updater_init(
 
   // message
   micro_ros_diagnostic_msgs__msg__MicroROSDiagnosticStatus__init(&updater->diag_status);
-  updater->diag_status.key_values.data = key_value_buffer;
-  updater->diag_status.key_values.size = 0;
-  updater->diag_status.key_values.capacity = sizeof(key_value_buffer);
+  updater->diag_status.values.data = key_value_buffer;
+  updater->diag_status.values.size = 0;
+  updater->diag_status.values.capacity = sizeof(key_value_buffer);
 
   return RCL_RET_OK;
 }
@@ -120,9 +120,9 @@ rclc_diagnostic_updater_fini(
     updater, "updater is a null pointer", return RCL_RET_INVALID_ARGUMENT);
 
   // fini methods use free(), as the data is static, can't be "freed"
-  updater->diag_status.key_values.data = NULL;
-  updater->diag_status.key_values.capacity = 0;
-  updater->diag_status.key_values.size = 0;
+  updater->diag_status.values.data = NULL;
+  updater->diag_status.values.capacity = 0;
+  updater->diag_status.values.size = 0;
 
   micro_ros_diagnostic_msgs__msg__MicroROSDiagnosticStatus__fini(&updater->diag_status);
 
@@ -163,7 +163,7 @@ rcl_ret_t
 rclc_diagnostic_call_task(
   diagnostic_task_t * task)
 {
-  return (task->function)(task->key_values, &task->number_of_key_values);
+  return (task->function)(task->values, &task->number_of_values);
 }
 
 rcl_ret_t
@@ -177,29 +177,29 @@ rclc_diagnostic_updater_update(
     rcl_ret_t task_ok = rclc_diagnostic_call_task(updater->tasks[i]);
 
     if ( (task_ok == RCL_RET_OK) &&
-      (updater->tasks[i]->number_of_key_values <=
-      MICRO_ROS_DIAGNOSTIC_UPDATER_MAX_KEY_VALUES_PER_TASK) )
+      (updater->tasks[i]->number_of_values <=
+      MICRO_ROS_DIAGNOSTIC_UPDATER_MAX_VALUES_PER_TASK) )
     {
       // name
       updater->diag_status.updater_id = updater->tasks[i]->updater_id;
       updater->diag_status.hardware_id = updater->tasks[i]->hardware_id;
-      updater->diag_status.number_of_key_values = updater->tasks[i]->number_of_key_values;
+      updater->diag_status.number_of_values = updater->tasks[i]->number_of_values;
 
       micro_ros_diagnostic_msgs__msg__MicroROSDiagnosticKeyValue key_value;
 
-      for (uint8_t value_index = 0u; value_index < updater->tasks[i]->number_of_key_values;
+      for (uint8_t value_index = 0u; value_index < updater->tasks[i]->number_of_values;
         value_index++)
       {
         key_value.key = updater->tasks[i]->id;
-        key_value.value_type = updater->tasks[i]->key_values[value_index].value_type;
-        key_value.bool_value = updater->tasks[i]->key_values[value_index].bool_value;
-        key_value.int_value = updater->tasks[i]->key_values[value_index].int_value;
-        key_value.value_id = updater->tasks[i]->key_values[value_index].value_id;
-        key_value.level = updater->tasks[i]->key_values[value_index].level;
+        key_value.value_type = updater->tasks[i]->values[value_index].value_type;
+        key_value.bool_value = updater->tasks[i]->values[value_index].bool_value;
+        key_value.int_value = updater->tasks[i]->values[value_index].int_value;
+        key_value.value_id = updater->tasks[i]->values[value_index].value_id;
+        key_value.level = updater->tasks[i]->values[value_index].level;
 
-        memcpy(&updater->diag_status.key_values.data[value_index], &key_value, sizeof(key_value));
+        memcpy(&updater->diag_status.values.data[value_index], &key_value, sizeof(key_value));
       }
-      updater->diag_status.key_values.size = updater->tasks[i]->number_of_key_values;
+      updater->diag_status.values.size = updater->tasks[i]->number_of_values;
 
       rcl_ret_t rc = rcl_publish(&updater->diag_pub, &updater->diag_status, NULL);
       if (rc == RCL_RET_OK) {
