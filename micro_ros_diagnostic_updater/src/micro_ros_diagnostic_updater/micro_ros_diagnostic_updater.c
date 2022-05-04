@@ -194,6 +194,7 @@ rclc_diagnostic_updater_update(
         key_value.value_type = updater->tasks[i]->values[value_index].value_type;
         key_value.bool_value = updater->tasks[i]->values[value_index].bool_value;
         key_value.int_value = updater->tasks[i]->values[value_index].int_value;
+        key_value.double_value = updater->tasks[i]->values[value_index].double_value;
         key_value.value_id = updater->tasks[i]->values[value_index].value_id;
         key_value.level = updater->tasks[i]->values[value_index].level;
 
