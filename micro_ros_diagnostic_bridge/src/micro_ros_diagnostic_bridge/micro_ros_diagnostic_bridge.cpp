@@ -92,6 +92,7 @@ MicroROSDiagnosticBridge::MicroROSDiagnosticBridge(const std::string & path)
         RCLCPP_DEBUG(get_logger(), "key %s value %s", keyvalue.key.c_str(), keyvalue.value.c_str());
       }
       msg_out->status.push_back(status_msg);
+      msg_out->header.stamp = rclcpp::Clock().now();
       ros2_diagnostics_pub_->publish(std::move(msg_out));
     };
 
