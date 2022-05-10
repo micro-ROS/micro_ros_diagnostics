@@ -15,6 +15,7 @@ find_package(rosidl_default_generators REQUIRED)
 find_package(std_msgs REQUIRED)
 
 set(msg_files
+  "msg/MicroROSDiagnosticKeyValue.msg"
   "msg/MicroROSDiagnosticStatus.msg"
 )
 set(srv_files

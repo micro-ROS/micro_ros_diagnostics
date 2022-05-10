@@ -23,7 +23,7 @@
 
 #include "rclcpp/rclcpp.hpp"
 
-#include "diagnostic_msgs/msg/diagnostic_status.hpp"
+#include "diagnostic_msgs/msg/diagnostic_array.hpp"
 #include "micro_ros_diagnostic_msgs/msg/micro_ros_diagnostic_status.hpp"
 
 
@@ -32,6 +32,8 @@ static const char UROS_DIAGNOSTICS_BRIDGE_TOPIC_OUT[] = "diagnostics";
 
 namespace uros_diagnostic_msg = micro_ros_diagnostic_msgs::msg;
 namespace diagnostic_msg = diagnostic_msgs::msg;
+
+constexpr int UNIQUE_POLYNOM = 4567;
 
 struct MicroROSDiagnosticUpdater
 {
@@ -46,7 +48,7 @@ struct MicroROSDiagnosticKey
 
   bool operator<(const MicroROSDiagnosticKey & rhs) const
   {
-    return (updater_id * UINT_MAX + key_id) < (rhs.updater_id * UINT_MAX + rhs.key_id);
+    return (updater_id * UNIQUE_POLYNOM + key_id) < (rhs.updater_id * UNIQUE_POLYNOM + rhs.key_id);
   }
 };
 
@@ -57,8 +59,10 @@ struct MicroROSDiagnosticValue
 
   bool operator<(const MicroROSDiagnosticValue & rhs) const
   {
-    return (task.updater_id * UINT_MAX * UINT_MAX + task.key_id * UINT_MAX + value_id) <
-           (rhs.task.updater_id * UINT_MAX * UINT_MAX + rhs.task.key_id * UINT_MAX + rhs.value_id);
+    return (task.updater_id * UNIQUE_POLYNOM * UNIQUE_POLYNOM + task.key_id * UNIQUE_POLYNOM +
+           value_id) <
+           (rhs.task.updater_id * UNIQUE_POLYNOM * UNIQUE_POLYNOM + rhs.task.key_id *
+           UNIQUE_POLYNOM + rhs.value_id);
   }
 };
 
@@ -72,25 +76,25 @@ class MicroROSDiagnosticBridge : public rclcpp::Node
 public:
   explicit MicroROSDiagnosticBridge(const std::string & path = "");
 
-  virtual std::string lookup_hardware(
+  std::string lookup_hardware(
     int hardware_id);
-  virtual const MicroROSDiagnosticUpdater lookup_updater(
+  const MicroROSDiagnosticUpdater lookup_updater(
     int updater_id);
-  virtual std::string lookup_key(
+  std::string lookup_key(
     int updater_id,
     int key);
-  virtual std::string lookup_value(
+  std::string lookup_value(
     int updater_id,
     int key,
     int value_id);
 
-protected:
-  virtual void read_lookup_table(const std::string & path);
+private:
+  void read_lookup_table(const std::string & path);
 
   rclcpp::Logger logger_;
-  rclcpp::Subscription<uros_diagnostic_msg::MicroROSDiagnosticStatus>::SharedPtr uros_sub_;
-  rclcpp::Publisher<diagnostic_msg::DiagnosticStatus>::SharedPtr ros2_pub_;
-  std::unique_ptr<diagnostic_msg::DiagnosticStatus> msg_out_;
+  rclcpp::Subscription<uros_diagnostic_msg::MicroROSDiagnosticStatus>::SharedPtr
+    uros_diagnostics_sub_;
+  rclcpp::Publisher<diagnostic_msg::DiagnosticArray>::SharedPtr ros2_diagnostics_pub_;
 
   HardwareMap hardware_map_;
   UpdaterMap updater_map_;
