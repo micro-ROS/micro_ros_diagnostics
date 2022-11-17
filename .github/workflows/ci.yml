@@ -11,27 +11,30 @@ on:
 
 jobs:
   build:
-    runs-on: ${{ matrix.os }}
     strategy:
       fail-fast: false
       matrix:
-        os: [ ubuntu-20.04 ]
-        ros_distribution: [ rolling ]
         include:
-          - docker_image: ubuntu:jammy
-            ros_distribution: rolling
-    container:
-      image: ${{ matrix.docker_image }}
+          - ros_distribution: "foxy"
+            os: "ubuntu-20.04"
+          - ros_distribution: "galactic"
+            os: "ubuntu-20.04"
+          - ros_distribution: "humble"
+            os: "ubuntu-22.04"
+          - ros_distribution: "rolling"
+            os: "ubuntu-22.04"
+    runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v2
-    - uses: ros-tooling/setup-ros@0.3.0
+    - uses: ros-tooling/setup-ros@v0.3
       with:
         use-ros2-testing: true
         required-ros-distributions: ${{ matrix.ros_distribution }}
     - name : Download and install dependencies
       run: |
-        apt-get install ros-${{ matrix.ros_distribution }}-rclc
-    - uses : ros-tooling/action-ros-ci@0.2.4
+        sudo apt-get install ros-${{ matrix.ros_distribution }}-rclc
+        sudo apt-get install ros-${{ matrix.ros_distribution }}-osrf-testing-tools-cpp
+    - uses : ros-tooling/action-ros-ci@v0.2
       with:
         package-name: "micro_ros_diagnostic_msgs micro_ros_diagnostic_updater micro_ros_common_diagnostics"
         target-ros2-distro: ${{ matrix.ros_distribution }}
