@@ -25,14 +25,17 @@ static const int16_t PROCESSOR_ID = 17;
 // The hardware id
 static const int16_t PROCESSOR_SERIAL = 1001;
 // Task id
-static const int16_t PROCESSOR_TEMPERATURE_TASK_ID = 0;
+static const int16_t PROCESSOR_TEMPERATURE_KEY = 0;
 // Task id
-static const int16_t PROCESSOR_LOAD_TASK_ID = 1;
+static const int16_t PROCESSOR_LOAD_KEY = 1;
 
 rcl_ret_t
 my_diagnostic_temperature(diagnostic_value_t * values, uint8_t * number_of_values)
 {
   *number_of_values = 1;
+
+  // Set the key to get translation
+  values[0].key = PROCESSOR_TEMPERATURE_KEY;
   // Fake a temperature
   ++my_diagnostic_temp;
   if (my_diagnostic_temp > 99) {
@@ -55,6 +58,9 @@ rcl_ret_t
 my_diagnostic_load(diagnostic_value_t * values, uint8_t * number_of_values)
 {
   *number_of_values = 1;
+
+  // Set the key to get translation
+  values[0].key = PROCESSOR_LOAD_KEY;
   // Fake a processor load
   rclc_diagnostic_value_set_int(&values[0], my_diagnostic_temp / 2);
 
@@ -111,7 +117,7 @@ int main(int argc, const char * argv[])
   }
   diagnostic_task_t temperature_task;
   rc = rclc_diagnostic_task_init(
-    &temperature_task, PROCESSOR_SERIAL, PROCESSOR_ID, PROCESSOR_TEMPERATURE_TASK_ID,
+    &temperature_task, PROCESSOR_SERIAL, PROCESSOR_ID,
     &my_diagnostic_temperature);
   if (rc != RCL_RET_OK) {
     printf("Error in creating diagnostic task\n");
@@ -119,7 +125,7 @@ int main(int argc, const char * argv[])
   }
   diagnostic_task_t load_task;
   rc = rclc_diagnostic_task_init(
-    &load_task, PROCESSOR_SERIAL, PROCESSOR_ID, PROCESSOR_LOAD_TASK_ID,
+    &load_task, PROCESSOR_SERIAL, PROCESSOR_ID,
     &my_diagnostic_load);
   if (rc != RCL_RET_OK) {
     printf("Error in creating diagnostic website checker\n");
