@@ -53,7 +53,6 @@ rclc_diagnostic_task_init(
   diagnostic_task_t * task,
   int16_t hardware_id,
   int16_t updater_id,
-  int16_t id,
   rcl_ret_t (* function)(
     diagnostic_value_t[MICRO_ROS_DIAGNOSTIC_UPDATER_MAX_VALUES_PER_TASK],
     uint8_t * number_of_values))
@@ -63,7 +62,6 @@ rclc_diagnostic_task_init(
   RCL_CHECK_FOR_NULL_WITH_MSG(
     function, "function is a null pointer", return RCL_RET_INVALID_ARGUMENT);
 
-  task->id = id;
   task->function = function;
   task->updater_id = updater_id;
   task->hardware_id = hardware_id;
@@ -148,8 +146,7 @@ rclc_diagnostic_updater_add_task(
 
   if (updater->num_tasks >= MICRO_ROS_DIAGNOSTIC_UPDATER_MAX_TASKS_PER_UPDATER) {
     RCUTILS_LOG_ERROR(
-      "Updater could not add task %d, already %d tasks added.",
-      task->id,
+      "Updater could not add task, already %d tasks added.",
       MICRO_ROS_DIAGNOSTIC_UPDATER_MAX_TASKS_PER_UPDATER);
     return RCL_RET_ERROR;
   }
@@ -190,7 +187,7 @@ rclc_diagnostic_updater_update(
       for (uint8_t value_index = 0u; value_index < updater->tasks[i]->number_of_values;
         value_index++)
       {
-        key_value.key = updater->tasks[i]->id;
+        key_value.key = updater->tasks[i]->values[value_index].key;
         key_value.value_type = updater->tasks[i]->values[value_index].value_type;
         key_value.bool_value = updater->tasks[i]->values[value_index].bool_value;
         key_value.int_value = updater->tasks[i]->values[value_index].int_value;
@@ -205,13 +202,11 @@ rclc_diagnostic_updater_update(
       rcl_ret_t rc = rcl_publish(&updater->diag_pub, &updater->diag_status, NULL);
       if (rc == RCL_RET_OK) {
         RCUTILS_LOG_DEBUG(
-          "Updater published value for '%d'.",
-          updater->tasks[i]->id);
+          "Updater %d published value for '%d'.", updater->id, i);
       }
     } else {
       RCUTILS_LOG_ERROR(
-        "Updater could not update diagnostic task '%d'.",
-        updater->tasks[i]->id);
+        "Updater %d could not update diagnostic task '%d'.", updater->id, i);
     }
   }
 

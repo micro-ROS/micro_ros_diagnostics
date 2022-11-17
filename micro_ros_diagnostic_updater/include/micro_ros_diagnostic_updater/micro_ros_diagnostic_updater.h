@@ -36,7 +36,6 @@ typedef struct diagnostic_value_t
 
 typedef struct diagnostic_task_t
 {
-  int16_t id;
   uint8_t number_of_values;
   diagnostic_value_t values[MICRO_ROS_DIAGNOSTIC_UPDATER_MAX_VALUES_PER_TASK];
   int16_t hardware_id;
@@ -72,7 +71,6 @@ rclc_diagnostic_task_init(
   diagnostic_task_t * task,
   int16_t hardware_id,
   int16_t updater_id,
-  int16_t id,
   rcl_ret_t (* function)(
     diagnostic_value_t[MICRO_ROS_DIAGNOSTIC_UPDATER_MAX_VALUES_PER_TASK],
     uint8_t * number_of_values));

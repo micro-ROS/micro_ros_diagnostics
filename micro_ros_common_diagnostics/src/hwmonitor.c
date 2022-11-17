@@ -20,12 +20,22 @@
 
 #include "micro_ros_diagnostic_updater/micro_ros_diagnostic_updater.h"
 
+// Variable value set in main() if passed as argument
+uint16_t task_id = 0;
+
 rcl_ret_t
-my_diagnostic_task(diagnostic_value_t * kv)
+my_diagnostic_task(
+  diagnostic_value_t values[MICRO_ROS_DIAGNOSTIC_UPDATER_MAX_VALUES_PER_TASK],
+  uint8_t * number_of_values)
 {
+  (void)number_of_values;
+  *number_of_values = 1;
+
+  values[0].key = task_id;
+
   // actual diagnostic task to be implemented
   rclc_diagnostic_value_set_level(
-    kv,
+    &values[0],
     micro_ros_diagnostic_msgs__msg__MicroROSDiagnosticStatus__STALE);
 
   return RCL_RET_OK;
@@ -35,7 +45,6 @@ int main(int argc, const char * argv[])
 {
   uint16_t hardware_id = 0;
   uint16_t updater_id = 0;
-  uint16_t task_id = 0;
   if (argc < 2) {
     printf("Need at least one argument: hardware ID. Optional: updater ID, task ID.\n");
     exit(1);
@@ -91,7 +100,7 @@ int main(int argc, const char * argv[])
     return -1;
   }
   diagnostic_task_t task;
-  rc = rclc_diagnostic_task_init(&task, hardware_id, updater_id, task_id, &my_diagnostic_task);
+  rc = rclc_diagnostic_task_init(&task, hardware_id, updater_id, &my_diagnostic_task);
   if (rc != RCL_RET_OK) {
     printf("Error in creating diagnostic task\n");
     return -1;
