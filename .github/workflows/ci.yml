@@ -33,6 +33,7 @@ jobs:
         sudo apt-get install ros-${{ matrix.ros_distribution }}-rclc
         sudo apt-get install ros-${{ matrix.ros_distribution }}-osrf-testing-tools-cpp
         pip3 install pyOpenSSL --upgrade
+        pip3 install pydocstyle==6.1.1 # downgrade to fix https://github.com/ament/ament_lint/pull/428
     - uses : ros-tooling/action-ros-ci@v0.2
       with:
         package-name: "micro_ros_diagnostic_msgs micro_ros_diagnostic_updater micro_ros_common_diagnostics"
