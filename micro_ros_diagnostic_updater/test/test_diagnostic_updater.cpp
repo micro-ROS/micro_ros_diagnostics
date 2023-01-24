@@ -73,13 +73,13 @@ TEST(TestDiagnosticUpdater, create_diagnostic_values) {
   EXPECT_EQ(value.int_value, 17);
   EXPECT_EQ(
     value.value_type,
-    micro_ros_diagnostic_msgs__msg__MicroROSDiagnosticStatus__VALUE_INT);
+    micro_ros_diagnostic_msgs__msg__MicroROSDiagnosticKeyValue__VALUE_INT);
 
   rclc_diagnostic_value_lookup(&value, 17);
   EXPECT_EQ(value.value_id, 17);
   EXPECT_EQ(
     value.value_type,
-    micro_ros_diagnostic_msgs__msg__MicroROSDiagnosticStatus__VALUE_LOOKUP);
+    micro_ros_diagnostic_msgs__msg__MicroROSDiagnosticKeyValue__VALUE_LOOKUP);
 
   rclc_diagnostic_value_set_level(
     &value,

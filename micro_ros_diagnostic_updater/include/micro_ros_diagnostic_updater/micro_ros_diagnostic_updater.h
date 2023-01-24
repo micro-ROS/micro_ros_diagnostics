@@ -32,6 +32,7 @@ typedef struct diagnostic_value_t
   int16_t value_id;
 
   int8_t level;
+  bool value_has_changed;
 } diagnostic_value_t;
 
 typedef struct diagnostic_task_t
@@ -57,6 +58,14 @@ typedef struct diagnostic_updater_t
 void rclc_diagnostic_value_set_int(
   diagnostic_value_t * kv,
   int32_t value);
+
+void rclc_diagnostic_value_set_float(
+  diagnostic_value_t * kv,
+  float value);
+
+void rclc_diagnostic_value_set_bool(
+  diagnostic_value_t * kv,
+  bool value);
 
 void rclc_diagnostic_value_lookup(
   diagnostic_value_t * kv,
