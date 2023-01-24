@@ -26,6 +26,7 @@
 #include <rcl_yaml_param_parser/parser.h>
 
 using micro_ros_diagnostic_msgs::msg::MicroROSDiagnosticStatus;
+using micro_ros_diagnostic_msgs::msg::MicroROSDiagnosticKeyValue;
 using diagnostic_msgs::msg::DiagnosticArray;
 
 static inline std::string VALUE_NOT_FOUND = "NOTFOUND";
@@ -73,16 +74,16 @@ MicroROSDiagnosticBridge::MicroROSDiagnosticBridge(const std::string & path)
           msg_in->values[value_index].key);
         keyvalue.key = lookup_key(msg_in->updater_id, msg_in->values[value_index].key);
         switch (msg_in->values[value_index].value_type) {
-          case MicroROSDiagnosticStatus::VALUE_BOOL:
+          case MicroROSDiagnosticKeyValue::VALUE_BOOL:
             keyvalue.value = std::to_string(msg_in->values[value_index].bool_value);
             break;
-          case MicroROSDiagnosticStatus::VALUE_INT:
+          case MicroROSDiagnosticKeyValue::VALUE_INT:
             keyvalue.value = std::to_string(msg_in->values[value_index].int_value);
             break;
-          case MicroROSDiagnosticStatus::VALUE_DOUBLE:
+          case MicroROSDiagnosticKeyValue::VALUE_FLOAT:
             keyvalue.value = std::to_string(msg_in->values[value_index].double_value);
             break;
-          case MicroROSDiagnosticStatus::VALUE_LOOKUP:
+          case MicroROSDiagnosticKeyValue::VALUE_LOOKUP:
             keyvalue.value = lookup_value(
               msg_in->updater_id, msg_in->values[value_index].key,
               msg_in->values[value_index].value_id);

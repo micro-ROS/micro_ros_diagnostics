@@ -27,8 +27,35 @@ rclc_diagnostic_value_set_int(
   diagnostic_value_t * kv,
   int32_t value)
 {
-  kv->value_type = micro_ros_diagnostic_msgs__msg__MicroROSDiagnosticStatus__VALUE_INT;
+  kv->value_type = micro_ros_diagnostic_msgs__msg__MicroROSDiagnosticKeyValue__VALUE_INT;
+  if (kv->int_value != value) {
+    kv->value_has_changed = true;
+  }
   kv->int_value = value;
+}
+
+void
+rclc_diagnostic_value_set_float(
+  diagnostic_value_t * kv,
+  float value)
+{
+  kv->value_type = micro_ros_diagnostic_msgs__msg__MicroROSDiagnosticKeyValue__VALUE_FLOAT;
+  if (kv->double_value != value) {
+    kv->value_has_changed = true;
+  }
+  kv->double_value = value;
+}
+
+void
+rclc_diagnostic_value_set_bool(
+  diagnostic_value_t * kv,
+  bool value)
+{
+  kv->value_type = micro_ros_diagnostic_msgs__msg__MicroROSDiagnosticKeyValue__VALUE_BOOL;
+  if (kv->bool_value != value) {
+    kv->value_has_changed = true;
+  }
+  kv->bool_value = value;
 }
 
 void
@@ -36,7 +63,10 @@ rclc_diagnostic_value_lookup(
   diagnostic_value_t * kv,
   int16_t value_id)
 {
-  kv->value_type = micro_ros_diagnostic_msgs__msg__MicroROSDiagnosticStatus__VALUE_LOOKUP;
+  kv->value_type = micro_ros_diagnostic_msgs__msg__MicroROSDiagnosticKeyValue__VALUE_LOOKUP;
+  if (kv->value_id != value_id) {
+    kv->value_has_changed = true;
+  }
   kv->value_id = value_id;
 }
 
@@ -46,6 +76,9 @@ rclc_diagnostic_value_set_level(
   int8_t level)
 {
   kv->level = level;
+  if (kv->level != level) {
+    kv->value_has_changed = true;
+  }
 }
 
 rcl_ret_t
@@ -182,11 +215,21 @@ rclc_diagnostic_updater_update(
       updater->diag_status.hardware_id = updater->tasks[i]->hardware_id;
       updater->diag_status.number_of_values = updater->tasks[i]->number_of_values;
 
-      micro_ros_diagnostic_msgs__msg__MicroROSDiagnosticKeyValue key_value;
+      updater->diag_status.values.size = updater->tasks[i]->number_of_values;
 
+      bool must_publish = false;
+      micro_ros_diagnostic_msgs__msg__MicroROSDiagnosticKeyValue key_value;
       for (uint8_t value_index = 0u; value_index < updater->tasks[i]->number_of_values;
         value_index++)
       {
+        // Quickly go to the next value if it has not changed
+        if (!updater->tasks[i]->values[value_index].value_has_changed) {
+          continue;
+        }
+        must_publish = true;
+        // We reset the value_has_changed flag
+        updater->tasks[i]->values[value_index].value_has_changed = false;
+
         key_value.key = updater->tasks[i]->values[value_index].key;
         key_value.value_type = updater->tasks[i]->values[value_index].value_type;
         key_value.bool_value = updater->tasks[i]->values[value_index].bool_value;
@@ -197,8 +240,10 @@ rclc_diagnostic_updater_update(
 
         memcpy(&updater->diag_status.values.data[value_index], &key_value, sizeof(key_value));
       }
-      updater->diag_status.values.size = updater->tasks[i]->number_of_values;
-
+      // We only publish if at least one value has changed
+      if (!must_publish) {
+        continue;
+      }
       rcl_ret_t rc = rcl_publish(&updater->diag_pub, &updater->diag_status, NULL);
       if (rc == RCL_RET_OK) {
         RCUTILS_LOG_DEBUG(

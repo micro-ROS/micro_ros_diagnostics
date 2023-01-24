@@ -62,7 +62,7 @@ my_diagnostic_load(diagnostic_value_t * values, uint8_t * number_of_values)
   // Set the key to get translation
   values[0].key = PROCESSOR_LOAD_KEY;
   // Fake a processor load
-  rclc_diagnostic_value_set_int(&values[0], my_diagnostic_temp / 2);
+  rclc_diagnostic_value_set_float(&values[0], (float)my_diagnostic_temp / 2.0f);
 
   // Calculate the diagnostic level
   if (my_diagnostic_temp > 46) {
