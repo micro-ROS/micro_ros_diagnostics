@@ -17,7 +17,10 @@
 #define MICRO_ROS_DIAGNOSTIC_UPDATER__MICRO_ROS_DIAGNOSTIC_UPDATER_H_
 
 #include <rcl/types.h>
+#include <std_msgs/msg/empty.h>
 #include <rclc/publisher.h>
+#include <rclc/subscription.h>
+#include <rclc/executor.h>
 #include <micro_ros_diagnostic_msgs/msg/micro_ros_diagnostic_status.h>
 #include "micro_ros_diagnostic_updater/config.h"
 
@@ -53,6 +56,9 @@ typedef struct diagnostic_updater_t
   diagnostic_task_t * tasks[MICRO_ROS_DIAGNOSTIC_UPDATER_MAX_TASKS_PER_UPDATER];
   rcl_publisher_t diag_pub;
   micro_ros_diagnostic_msgs__msg__MicroROSDiagnosticStatus diag_status;
+  rcl_subscription_t force_update_subscriber;
+  bool force_update;
+  std_msgs__msg__Empty empty_msg;
 } diagnostic_updater_t;
 
 void rclc_diagnostic_value_set_int(
@@ -84,15 +90,21 @@ rclc_diagnostic_task_init(
     diagnostic_value_t[MICRO_ROS_DIAGNOSTIC_UPDATER_MAX_VALUES_PER_TASK],
     uint8_t * number_of_values));
 
+// Added to work with force update, it's very important to call spin
+// or spin_some before updater_update
+void force_update_callback(const void *, void * updater_ptr);
+
 rcl_ret_t
 rclc_diagnostic_updater_init(
   diagnostic_updater_t * updater,
-  const rcl_node_t * node);
+  rcl_node_t * node,
+  rclc_executor_t * executor);
 
 rcl_ret_t
 rclc_diagnostic_updater_fini(
   diagnostic_updater_t * updater,
-  rcl_node_t * node);
+  rcl_node_t * node,
+  rclc_executor_t * executor);
 
 rcl_ret_t
 rclc_diagnostic_updater_add_task(

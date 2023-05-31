@@ -102,10 +102,19 @@ rclc_diagnostic_task_init(
   return RCL_RET_OK;
 }
 
+void force_update_callback(const void * msgin, void * updater_ptr)
+{
+  //we ignore msgin as it's empty
+  (void) msgin;
+  diagnostic_updater_t * updater = (diagnostic_updater_t *) updater_ptr;
+  updater->force_update = true;
+}
+
 rcl_ret_t
 rclc_diagnostic_updater_init(
   diagnostic_updater_t * updater,
-  const rcl_node_t * node)
+  rcl_node_t * node,
+  rclc_executor_t * executor)
 {
   RCL_CHECK_FOR_NULL_WITH_MSG(
     updater, "updater is a null pointer", return RCL_RET_INVALID_ARGUMENT);
@@ -139,13 +148,45 @@ rclc_diagnostic_updater_init(
   updater->diag_status.values.size = 0;
   updater->diag_status.values.capacity = sizeof(key_value_buffer);
 
+  updater->force_update = false;
+
+  const rosidl_message_type_support_t * empty_type_support =
+    ROSIDL_GET_MSG_TYPE_SUPPORT(
+    std_msgs,
+    msg,
+    Empty);
+  rc = rclc_subscription_init_default(
+    &updater->force_update_subscriber, node, empty_type_support,
+    UROS_DIAGNOSTIC_UPDATER_FORCE_UPDATE_TOPIC);
+  if (RCL_RET_OK != rc) {
+    RCUTILS_LOG_ERROR(
+      "Updater '%d' could not create subscriber /%s.",
+      updater->id,
+      UROS_DIAGNOSTIC_UPDATER_FORCE_UPDATE_TOPIC);
+    return RCL_RET_ERROR;
+  }
+  std_msgs__msg__Empty__init(&updater->empty_msg);
+  // Executor should already be initialized
+  rc = rclc_executor_add_subscription_with_context(
+    executor, &updater->force_update_subscriber,
+    &updater->empty_msg, &force_update_callback,
+    (void *)updater, ON_NEW_DATA);
+
+  if (RCL_RET_OK != rc) {
+    RCUTILS_LOG_ERROR(
+      "Updater '%d' could not add subscription to executor.",
+      updater->id);
+    return RCL_RET_ERROR;
+  }
+
   return RCL_RET_OK;
 }
 
 rcl_ret_t
 rclc_diagnostic_updater_fini(
   diagnostic_updater_t * updater,
-  rcl_node_t * node)
+  rcl_node_t * node,
+  rclc_executor_t * executor)
 {
   RCL_CHECK_FOR_NULL_WITH_MSG(
     updater, "updater is a null pointer", return RCL_RET_INVALID_ARGUMENT);
@@ -161,6 +202,13 @@ rclc_diagnostic_updater_fini(
   if (RCL_RET_OK != rc) {
     RCUTILS_LOG_ERROR(
       "Error when cleaning updater. Could not delete publisher.");
+    return RCL_RET_ERROR;
+  }
+
+  rc = rclc_executor_remove_subscription(executor, &updater->force_update_subscriber);
+  if (RCL_RET_OK != rc) {
+    RCUTILS_LOG_ERROR(
+      "Error when cleaning updater. Could not remove subscription.");
     return RCL_RET_ERROR;
   }
 
@@ -222,8 +270,8 @@ rclc_diagnostic_updater_update(
       for (uint8_t value_index = 0u; value_index < updater->tasks[i]->number_of_values;
         value_index++)
       {
-        // Quickly go to the next value if it has not changed
-        if (!updater->tasks[i]->values[value_index].value_has_changed) {
+        // Quickly go to the next value if it has not changed or no force update
+        if (!updater->tasks[i]->values[value_index].value_has_changed && !updater->force_update) {
           continue;
         }
         must_publish = true;
@@ -254,6 +302,8 @@ rclc_diagnostic_updater_update(
         "Updater %d could not update diagnostic task '%d'.", updater->id, i);
     }
   }
+  // Reset regardless
+  updater->force_update = false;
 
   return RCL_RET_OK;
 }

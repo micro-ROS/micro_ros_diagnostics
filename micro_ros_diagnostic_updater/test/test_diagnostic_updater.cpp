@@ -107,13 +107,19 @@ TEST(TestDiagnosticUpdater, create_updater) {
   rcl_node_t node = rcl_get_zero_initialized_node();
   rc = rclc_node_init_default(&node, my_name, my_namespace, &support);
 
+  // executor
+  rclc_executor_t executor;
+  executor = rclc_executor_get_zero_initialized_executor();
+  unsigned int num_handles = 1;
+  rclc_executor_init(&executor, &support.context, num_handles, &allocator);
+
   // updater
   diagnostic_updater_t updater;
-  rc = rclc_diagnostic_updater_init(&updater, &node);
+  rc = rclc_diagnostic_updater_init(&updater, &node, &executor);
   EXPECT_EQ(RCL_RET_OK, rc);
 
   // updater
-  rc = rclc_diagnostic_updater_fini(&updater, &node);
+  rc = rclc_diagnostic_updater_fini(&updater, &node, &executor);
   EXPECT_EQ(RCL_RET_OK, rc);
 }
 
@@ -129,9 +135,15 @@ TEST(TestDiagnosticUpdater, updater_add_tasks) {
   rcl_node_t node = rcl_get_zero_initialized_node();
   rc = rclc_node_init_default(&node, my_name, my_namespace, &support);
 
+  // executor
+  rclc_executor_t executor;
+  executor = rclc_executor_get_zero_initialized_executor();
+  unsigned int num_handles = 1;
+  rclc_executor_init(&executor, &support.context, num_handles, &allocator);
+
   // updater
   diagnostic_updater_t updater;
-  rc = rclc_diagnostic_updater_init(&updater, &node);
+  rc = rclc_diagnostic_updater_init(&updater, &node, &executor);
   EXPECT_EQ(RCL_RET_OK, rc);
 
   diagnostic_task_t task;
@@ -151,7 +163,7 @@ TEST(TestDiagnosticUpdater, updater_add_tasks) {
   EXPECT_EQ(RCL_RET_ERROR, rc);
 
   // updater
-  rc = rclc_diagnostic_updater_fini(&updater, &node);
+  rc = rclc_diagnostic_updater_fini(&updater, &node, &executor);
   EXPECT_EQ(RCL_RET_OK, rc);
 }
 
@@ -167,9 +179,15 @@ TEST(TestDiagnosticUpdater, updater_update) {
   rcl_node_t node = rcl_get_zero_initialized_node();
   rc = rclc_node_init_default(&node, my_name, my_namespace, &support);
 
+  // executor
+  rclc_executor_t executor;
+  executor = rclc_executor_get_zero_initialized_executor();
+  unsigned int num_handles = 1;
+  rclc_executor_init(&executor, &support.context, num_handles, &allocator);
+
   // updater
   diagnostic_updater_t updater;
-  rc = rclc_diagnostic_updater_init(&updater, &node);
+  rc = rclc_diagnostic_updater_init(&updater, &node, &executor);
   EXPECT_EQ(RCL_RET_OK, rc);
 
   diagnostic_task_t task0, task1;
@@ -194,6 +212,6 @@ TEST(TestDiagnosticUpdater, updater_update) {
   EXPECT_EQ(RCL_RET_OK, rc);
 
   // updater
-  rc = rclc_diagnostic_updater_fini(&updater, &node);
+  rc = rclc_diagnostic_updater_fini(&updater, &node, &executor);
   EXPECT_EQ(RCL_RET_OK, rc);
 }
