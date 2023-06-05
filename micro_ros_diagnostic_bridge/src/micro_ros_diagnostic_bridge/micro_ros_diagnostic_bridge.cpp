@@ -43,12 +43,12 @@ MicroROSDiagnosticBridge::MicroROSDiagnosticBridge(const std::string & path)
   }
   read_lookup_table(lookup_table_path);
 
-  rclcpp::QoS qos{rclcpp::KeepLast{10}};
-  qos.reliable();
+  rclcpp::QoS qos_out{rclcpp::KeepLast{10}};
+  qos_out.reliable();
 
   ros2_diagnostics_pub_ = create_publisher<DiagnosticArray>(
     UROS_DIAGNOSTICS_BRIDGE_TOPIC_OUT,
-    qos);
+    qos_out);
 
   auto callback =
     [this](const MicroROSDiagnosticStatus::SharedPtr msg_in) -> void
@@ -97,9 +97,11 @@ MicroROSDiagnosticBridge::MicroROSDiagnosticBridge(const std::string & path)
       ros2_diagnostics_pub_->publish(std::move(msg_out));
     };
 
+  rclcpp::QoS qos_in{rclcpp::KeepAll{}};
+  qos_in.reliable();
   uros_diagnostics_sub_ = create_subscription<MicroROSDiagnosticStatus>(
     UROS_DIAGNOSTICS_BRIDGE_TOPIC_IN,
-    qos,
+    qos_in,
     callback);
 }
 
