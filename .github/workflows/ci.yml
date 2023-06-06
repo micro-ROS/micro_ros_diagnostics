@@ -15,8 +15,6 @@ jobs:
       fail-fast: false
       matrix:
         include:
-          - ros_distribution: "foxy"
-            os: "ubuntu-20.04"
           - ros_distribution: "humble"
             os: "ubuntu-22.04"
           - ros_distribution: "rolling"
