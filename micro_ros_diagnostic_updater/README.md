@@ -63,6 +63,10 @@ As mentioned, this package does not build the examples by default, to do so, you
 colcon build --packages-select micro_ros_diagnostic_updater --cmake-args -DMICRO_ROS_DIAGNOSTIC_UPDATER_EXAMPLES=ON
 ```
 
+### Publish only on update and Force update ###
+
+The updater won't publish statuses of task who's data is unchanged, this is to reduce the traffic and processing needed by the updater on each iteration. However, due to different reasons, one may want to force the updater to publish everything. This is done with a subscription that is added to the executor passed on the initialization of the updater. The subscriber will be listening for a message of type `std_msgs/msg/Empty`, and the topic is always `<namespace>/diagnostics_uros/force_update`. Keep in mind, the `<namespace>` can be modified as indicated above.
+
 ## License
 
 The micro-ROS diagnostics framework packages are open-sourced under the Apache-2.0 license. See the [../LICENSE](LICENSE) file for details.

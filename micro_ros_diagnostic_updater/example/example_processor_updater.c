@@ -108,9 +108,15 @@ int main(int argc, const char * argv[])
     return -1;
   }
 
+  // executor
+  rclc_executor_t executor;
+  executor = rclc_executor_get_zero_initialized_executor();
+  unsigned int num_handles = 1;
+  rclc_executor_init(&executor, &context, num_handles, &allocator);
+
   // updater
   diagnostic_updater_t updater;
-  rc = rclc_diagnostic_updater_init(&updater, &my_node);
+  rc = rclc_diagnostic_updater_init(&updater, &my_node, &executor);
   if (rc != RCL_RET_OK) {
     printf("Error in creating diagnostic updater\n");
     return -1;
@@ -157,7 +163,7 @@ int main(int argc, const char * argv[])
     sleep(1);
   }
 
-  rclc_diagnostic_updater_fini(&updater, &my_node);
+  rclc_diagnostic_updater_fini(&updater, &my_node, &executor);
   if (rc != RCL_RET_OK) {
     printf("Error while cleaning up!\n");
     return -1;
