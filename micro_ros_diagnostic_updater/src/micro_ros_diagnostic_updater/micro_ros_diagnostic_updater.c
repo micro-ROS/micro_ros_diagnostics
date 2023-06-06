@@ -104,7 +104,7 @@ rclc_diagnostic_task_init(
 
 void force_update_callback(const void * msgin, void * updater_ptr)
 {
-  //we ignore msgin as it's empty
+  // we ignore msgin as it's empty
   (void) msgin;
   diagnostic_updater_t * updater = (diagnostic_updater_t *) updater_ptr;
   updater->force_update = true;
