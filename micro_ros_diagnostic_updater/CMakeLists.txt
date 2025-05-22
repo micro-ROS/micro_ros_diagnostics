@@ -44,10 +44,10 @@ target_include_directories(${PROJECT_NAME}
     PRIVATE
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src>
 )
-ament_target_dependencies(${PROJECT_NAME}
-  rclc
-  rcutils
-  micro_ros_diagnostic_msgs
+target_link_libraries(${PROJECT_NAME} PUBLIC
+  rclc::rclc
+  rcutils::rcutils
+  ${micro_ros_diagnostic_msgs_TARGETS}
 )
 
 # Create source files with the define
@@ -62,11 +62,12 @@ if(MICRO_ROS_DIAGNOSTIC_UPDATER_EXAMPLES)
 
   set(processor_example example_processor_updater)
   add_executable(${processor_example} example/example_processor_updater.c)
-  target_link_libraries(${processor_example} ${PROJECT_NAME})
-  ament_target_dependencies(${processor_example}
-    rclc
-    rcutils
-    micro_ros_diagnostic_msgs)
+  target_link_libraries(${processor_example}
+    ${PROJECT_NAME}
+    rclc::rclc
+    rcutils::rcutils
+    ${micro_ros_diagnostic_msgs_TARGETS}
+  )
 
   install(TARGETS
     ${processor_example}
@@ -75,11 +76,12 @@ if(MICRO_ROS_DIAGNOSTIC_UPDATER_EXAMPLES)
 
   set(website_example example_website_checker)
   add_executable(${website_example} example/example_website_checker.c)
-  target_link_libraries(${website_example} ${PROJECT_NAME})
-  ament_target_dependencies(${website_example}
-    rclc
-    rcutils
-    micro_ros_diagnostic_msgs)
+  target_link_libraries(${website_example}
+    ${PROJECT_NAME}
+    rclc::rclc
+    rcutils::rcutils
+    ${micro_ros_diagnostic_msgs_TARGETS}
+  )
 
   install(TARGETS
     ${website_example}
@@ -89,7 +91,7 @@ endif()
 
 # Install
 install(DIRECTORY include/ DESTINATION include)
-install(TARGETS ${PROJECT_NAME} DESTINATION lib)
+install(TARGETS ${PROJECT_NAME} EXPORT ${PROJECT_NAME} DESTINATION lib)
 
 # Install config.h file.
 install(
@@ -99,8 +101,12 @@ install(
     include/${PROJECT_NAME}
 )
 
+# Export old-style CMake variables
 ament_export_include_directories(include)
 ament_export_libraries(${PROJECT_NAME})
+
+# Export modern CMake targets
+ament_export_targets(${PROJECT_NAME})
 
 if(BUILD_TESTING)
   find_package(ament_cmake_gtest REQUIRED)
@@ -115,22 +121,19 @@ if(BUILD_TESTING)
     test/test_diagnostic_updater.cpp)
 
   target_include_directories(${PROJECT_NAME}_test PRIVATE include src)
-  target_link_libraries(${PROJECT_NAME}_test ${PROJECT_NAME})
-  ament_target_dependencies(${PROJECT_NAME}_test
-    rcl
-    rclc
-    micro_ros_diagnostic_msgs
+  target_link_libraries(${PROJECT_NAME}_test
+    ${PROJECT_NAME}
+    rcl::rcl
+    rclc::rclc
+    ${micro_ros_diagnostic_msgs_TARGETS}
   )
 endif()
 
-# export dependencies
-# specific order: dependents before dependencies
-ament_export_include_directories(include)
-ament_export_libraries(${PROJECT_NAME})
-ament_export_dependencies(ament_cmake)
-ament_export_dependencies(micro_ros_diagnostic_msgs)
-ament_export_dependencies(rosidl_generator_c)
-ament_export_dependencies(rcl)
-ament_export_dependencies(rclc)
-ament_export_dependencies(rcutils)
+ament_export_dependencies(
+  micro_ros_diagnostic_msgs
+  rosidl_generator_c
+  rcl
+  rclc
+  rcutils
+)
 ament_package()

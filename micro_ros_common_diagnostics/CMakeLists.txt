@@ -29,11 +29,11 @@ add_executable(hwmonitor src/hwmonitor.c)
 target_include_directories(hwmonitor PUBLIC
   $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}/include>
   $<INSTALL_INTERFACE:include>)
-ament_target_dependencies(hwmonitor
-  "micro_ros_diagnostic_updater"
-  "micro_ros_diagnostic_msgs"
-  "rclc"
-  "rcutils"
+target_link_libraries(hwmonitor
+  micro_ros_diagnostic_updater::micro_ros_diagnostic_updater
+  ${micro_ros_diagnostic_msgs_TARGETS}
+  rclc::rclc
+  rcutils::rcutils
 )
 
 install(TARGETS hwmonitor
