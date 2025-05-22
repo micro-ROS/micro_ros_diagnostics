@@ -36,10 +36,10 @@ target_include_directories(diagnostic_bridge
     PRIVATE
         $<BUILD_INTERFACE:${PROJECT_SOURCE_DIR}/src>
 )
-ament_target_dependencies(diagnostic_bridge
-  rclcpp
-  diagnostic_msgs
-  micro_ros_diagnostic_msgs
+target_link_libraries(diagnostic_bridge
+  rclcpp::rclcpp
+  ${diagnostic_msgs_TARGETS}
+  ${micro_ros_diagnostic_msgs_TARGETS}
 )
 install(TARGETS diagnostic_bridge
   DESTINATION lib/${PROJECT_NAME})
@@ -83,10 +83,10 @@ if(BUILD_TESTING)
       ${rclcpp_INCLUDE_DIRS}
       ${CMAKE_CURRENT_BINARY_DIR}
     )
-    ament_target_dependencies(test_diagnostic_bridge
-      "rclcpp"
-      "diagnostic_msgs"
-      "micro_ros_diagnostic_msgs")
+    target_link_libraries(test_diagnostic_bridge
+      rclcpp::rclcpp
+      ${diagnostic_msgs_TARGETS}
+      ${micro_ros_diagnostic_msgs_TARGETS})
   endif()
 endif()
 
