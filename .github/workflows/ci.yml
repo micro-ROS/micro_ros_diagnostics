@@ -17,8 +17,10 @@ jobs:
         include:
           - ros_distribution: "humble"
             os: "ubuntu-22.04"
+          - ros_distribution: "jazzy"
+            os: "ubuntu-24.04"
           - ros_distribution: "rolling"
-            os: "ubuntu-22.04"
+            os: "ubuntu-24.04"
     runs-on: ${{ matrix.os }}
     steps:
     - uses: actions/checkout@v2
@@ -46,6 +48,6 @@ jobs:
             }
           }
         colcon-mixin-repository: https://raw.githubusercontent.com/colcon/colcon-mixin-repository/master/index.yaml
-    - uses: codecov/codecov-action@v1.5.0
+    - uses: codecov/codecov-action@v5
       with:
         file: ros_ws/lcov/total_coverage.info
