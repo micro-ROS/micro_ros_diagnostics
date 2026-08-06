@@ -56,6 +56,8 @@ typedef struct diagnostic_updater_t
   diagnostic_task_t * tasks[MICRO_ROS_DIAGNOSTIC_UPDATER_MAX_TASKS_PER_UPDATER];
   rcl_publisher_t diag_pub;
   micro_ros_diagnostic_msgs__msg__MicroROSDiagnosticStatus diag_status;
+  micro_ros_diagnostic_msgs__msg__MicroROSDiagnosticKeyValue key_value_buffer[
+    MICRO_ROS_DIAGNOSTIC_UPDATER_MAX_VALUES_PER_TASK];
   rcl_subscription_t force_update_subscriber;
   bool force_update;
   std_msgs__msg__Empty empty_msg;

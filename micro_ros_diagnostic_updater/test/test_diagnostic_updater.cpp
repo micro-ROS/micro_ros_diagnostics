@@ -123,6 +123,53 @@ TEST(TestDiagnosticUpdater, create_updater) {
   EXPECT_EQ(RCL_RET_OK, rc);
 }
 
+TEST(TestDiagnosticUpdater, updaters_have_independent_value_buffers) {
+  rclc_support_t support;
+  rcl_ret_t rc;
+
+  // node
+  rcl_allocator_t allocator = rcl_get_default_allocator();
+  rc = rclc_support_init(&support, 0, nullptr, &allocator);
+  const char * my_name = "test_independent_updaters_node";
+  const char * my_namespace = "";
+  rcl_node_t node = rcl_get_zero_initialized_node();
+  rc = rclc_node_init_default(&node, my_name, my_namespace, &support);
+
+  // executor
+  rclc_executor_t executor;
+  executor = rclc_executor_get_zero_initialized_executor();
+  unsigned int num_handles = 2;
+  rclc_executor_init(&executor, &support.context, num_handles, &allocator);
+
+  // updaters
+  diagnostic_updater_t updater_0;
+  diagnostic_updater_t updater_1;
+  rc = rclc_diagnostic_updater_init(&updater_0, &node, &executor);
+  ASSERT_EQ(RCL_RET_OK, rc);
+  rc = rclc_diagnostic_updater_init(&updater_1, &node, &executor);
+  ASSERT_EQ(RCL_RET_OK, rc);
+
+  EXPECT_EQ(updater_0.key_value_buffer, updater_0.diag_status.values.data);
+  EXPECT_EQ(updater_1.key_value_buffer, updater_1.diag_status.values.data);
+  EXPECT_NE(updater_0.diag_status.values.data, updater_1.diag_status.values.data);
+  EXPECT_EQ(
+    MICRO_ROS_DIAGNOSTIC_UPDATER_MAX_VALUES_PER_TASK,
+    updater_0.diag_status.values.capacity);
+  EXPECT_EQ(
+    MICRO_ROS_DIAGNOSTIC_UPDATER_MAX_VALUES_PER_TASK,
+    updater_1.diag_status.values.capacity);
+
+  updater_0.key_value_buffer[0].key = 17;
+  updater_1.key_value_buffer[0].key = 42;
+  EXPECT_EQ(17, updater_0.diag_status.values.data[0].key);
+  EXPECT_EQ(42, updater_1.diag_status.values.data[0].key);
+
+  rc = rclc_diagnostic_updater_fini(&updater_0, &node, &executor);
+  EXPECT_EQ(RCL_RET_OK, rc);
+  rc = rclc_diagnostic_updater_fini(&updater_1, &node, &executor);
+  EXPECT_EQ(RCL_RET_OK, rc);
+}
+
 TEST(TestDiagnosticUpdater, updater_add_tasks) {
   rclc_support_t support;
   rcl_ret_t rc;
