@@ -19,9 +19,6 @@
 #include <micro_ros_diagnostic_updater/micro_ros_diagnostic_updater.h>
 #include <micro_ros_diagnostic_msgs/msg/micro_ros_diagnostic_status.h>
 
-static micro_ros_diagnostic_msgs__msg__MicroROSDiagnosticKeyValue key_value_buffer[
-  MICRO_ROS_DIAGNOSTIC_UPDATER_MAX_VALUES_PER_TASK];
-
 void
 rclc_diagnostic_value_set_int(
   diagnostic_value_t * kv,
@@ -144,9 +141,9 @@ rclc_diagnostic_updater_init(
 
   // message
   micro_ros_diagnostic_msgs__msg__MicroROSDiagnosticStatus__init(&updater->diag_status);
-  updater->diag_status.values.data = key_value_buffer;
+  updater->diag_status.values.data = updater->key_value_buffer;
   updater->diag_status.values.size = 0;
-  updater->diag_status.values.capacity = sizeof(key_value_buffer);
+  updater->diag_status.values.capacity = MICRO_ROS_DIAGNOSTIC_UPDATER_MAX_VALUES_PER_TASK;
 
   updater->force_update = false;
 
