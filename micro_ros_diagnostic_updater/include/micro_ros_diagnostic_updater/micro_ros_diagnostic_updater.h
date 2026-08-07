@@ -38,15 +38,24 @@ typedef struct diagnostic_value_t
   bool value_has_changed;
 } diagnostic_value_t;
 
+typedef rcl_ret_t (* diagnostic_task_function_t)(
+  diagnostic_value_t[MICRO_ROS_DIAGNOSTIC_UPDATER_MAX_VALUES_PER_TASK],
+  uint8_t * number_of_values);
+
+typedef rcl_ret_t (* diagnostic_task_function_with_context_t)(
+  diagnostic_value_t[MICRO_ROS_DIAGNOSTIC_UPDATER_MAX_VALUES_PER_TASK],
+  uint8_t * number_of_values,
+  void * context);
+
 typedef struct diagnostic_task_t
 {
   uint8_t number_of_values;
   diagnostic_value_t values[MICRO_ROS_DIAGNOSTIC_UPDATER_MAX_VALUES_PER_TASK];
   int16_t hardware_id;
   int16_t updater_id;
-  rcl_ret_t (* function)(
-    diagnostic_value_t[MICRO_ROS_DIAGNOSTIC_UPDATER_MAX_VALUES_PER_TASK],
-    uint8_t * number_of_values);
+  diagnostic_task_function_t function;
+  diagnostic_task_function_with_context_t function_with_context;
+  void * context;
 } diagnostic_task_t;
 
 typedef struct diagnostic_updater_t
@@ -86,9 +95,15 @@ rclc_diagnostic_task_init(
   diagnostic_task_t * task,
   int16_t hardware_id,
   int16_t updater_id,
-  rcl_ret_t (* function)(
-    diagnostic_value_t[MICRO_ROS_DIAGNOSTIC_UPDATER_MAX_VALUES_PER_TASK],
-    uint8_t * number_of_values));
+  diagnostic_task_function_t function);
+
+rcl_ret_t
+rclc_diagnostic_task_init_with_context(
+  diagnostic_task_t * task,
+  int16_t hardware_id,
+  int16_t updater_id,
+  diagnostic_task_function_with_context_t function,
+  void * context);
 
 // Added to work with force update, it's very important to call spin
 // or spin_some before updater_update

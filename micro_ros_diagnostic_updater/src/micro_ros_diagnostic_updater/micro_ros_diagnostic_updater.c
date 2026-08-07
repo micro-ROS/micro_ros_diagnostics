@@ -86,9 +86,7 @@ rclc_diagnostic_task_init(
   diagnostic_task_t * task,
   int16_t hardware_id,
   int16_t updater_id,
-  rcl_ret_t (* function)(
-    diagnostic_value_t[MICRO_ROS_DIAGNOSTIC_UPDATER_MAX_VALUES_PER_TASK],
-    uint8_t * number_of_values))
+  diagnostic_task_function_t function)
 {
   RCL_CHECK_FOR_NULL_WITH_MSG(
     task, "task is a null pointer", return RCL_RET_INVALID_ARGUMENT);
@@ -96,6 +94,30 @@ rclc_diagnostic_task_init(
     function, "function is a null pointer", return RCL_RET_INVALID_ARGUMENT);
 
   task->function = function;
+  task->function_with_context = NULL;
+  task->context = NULL;
+  task->updater_id = updater_id;
+  task->hardware_id = hardware_id;
+
+  return RCL_RET_OK;
+}
+
+rcl_ret_t
+rclc_diagnostic_task_init_with_context(
+  diagnostic_task_t * task,
+  int16_t hardware_id,
+  int16_t updater_id,
+  diagnostic_task_function_with_context_t function,
+  void * context)
+{
+  RCL_CHECK_FOR_NULL_WITH_MSG(
+    task, "task is a null pointer", return RCL_RET_INVALID_ARGUMENT);
+  RCL_CHECK_FOR_NULL_WITH_MSG(
+    function, "function is a null pointer", return RCL_RET_INVALID_ARGUMENT);
+
+  task->function = NULL;
+  task->function_with_context = function;
+  task->context = context;
   task->updater_id = updater_id;
   task->hardware_id = hardware_id;
 
@@ -241,6 +263,10 @@ rcl_ret_t
 rclc_diagnostic_call_task(
   diagnostic_task_t * task)
 {
+  if (task->function_with_context != NULL) {
+    return (task->function_with_context)(
+      task->values, &task->number_of_values, task->context);
+  }
   return (task->function)(task->values, &task->number_of_values);
 }
 

@@ -20,8 +20,11 @@
 #include <micro_ros_diagnostic_updater/micro_ros_diagnostic_updater.h>
 #include <micro_ros_diagnostic_msgs/msg/micro_ros_diagnostic_status.h>
 
-static int my_diagnostic_status = 0;
-static int my_website_status = 0;
+typedef struct website_diagnostic_context_t
+{
+  int diagnostic_status;
+  int website_status;
+} website_diagnostic_context_t;
 // Hardware ID
 static const int16_t WEBSITE_SERIAL = 998;
 // Updater ID
@@ -33,35 +36,36 @@ static const uint16_t WEBSITE_STATUS_TASK_ID = 42;
 rcl_ret_t
 my_diagnostic_website_check(
   diagnostic_value_t values[MICRO_ROS_DIAGNOSTIC_UPDATER_MAX_VALUES_PER_TASK],
-  uint8_t * number_of_values)
+  uint8_t * number_of_values,
+  void * context)
 {
-  // Cast to avoid warnings
-  (void)number_of_values;
+  website_diagnostic_context_t * website_context =
+    (website_diagnostic_context_t *) context;
   *number_of_values = 1;
 
-  ++my_diagnostic_status;
+  ++website_context->diagnostic_status;
 
   values[0].key = WEBSITE_STATUS_TASK_ID;
-  if (my_diagnostic_status > 99) {
-    my_diagnostic_status = 0;
+  if (website_context->diagnostic_status > 99) {
+    website_context->diagnostic_status = 0;
   }
-  if (my_diagnostic_status % 13 == 0) {
-    my_website_status = 404;
+  if (website_context->diagnostic_status % 13 == 0) {
+    website_context->website_status = 404;
     rclc_diagnostic_value_set_level(
       &values[0],
       micro_ros_diagnostic_msgs__msg__MicroROSDiagnosticStatus__WARN);
-  } else if (my_diagnostic_status % 17 == 0) {
-    my_website_status = 500;
+  } else if (website_context->diagnostic_status % 17 == 0) {
+    website_context->website_status = 500;
     rclc_diagnostic_value_set_level(
       &values[0],
       micro_ros_diagnostic_msgs__msg__MicroROSDiagnosticStatus__ERROR);
   } else {
-    my_website_status = 200;
+    website_context->website_status = 200;
     rclc_diagnostic_value_set_level(
       &values[0],
       micro_ros_diagnostic_msgs__msg__MicroROSDiagnosticStatus__OK);
   }
-  rclc_diagnostic_value_lookup(&values[0], my_website_status);
+  rclc_diagnostic_value_lookup(&values[0], website_context->website_status);
 
   return RCL_RET_OK;
 }
@@ -115,9 +119,10 @@ int main(int argc, const char * argv[])
     return -1;
   }
   diagnostic_task_t task;
-  rc = rclc_diagnostic_task_init(
+  website_diagnostic_context_t website_context = {0, 0};
+  rc = rclc_diagnostic_task_init_with_context(
     &task, WEBSITE_SERIAL, WEBSITE_ID,
-    &my_diagnostic_website_check);
+    &my_diagnostic_website_check, &website_context);
   if (rc != RCL_RET_OK) {
     printf("Error in creating diagnostic task\n");
     return -1;

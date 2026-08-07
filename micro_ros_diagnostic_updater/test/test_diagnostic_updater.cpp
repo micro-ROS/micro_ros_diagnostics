@@ -27,6 +27,12 @@ extern "C"
 static int diagnostic_mockup_counter_0 = 0;
 static int diagnostic_mockup_counter_1 = 0;
 
+typedef struct diagnostic_mockup_context_t
+{
+  int value;
+  int calls;
+} diagnostic_mockup_context_t;
+
 rcl_ret_t
 update_function_mockup_0(
   diagnostic_value_t values[MICRO_ROS_DIAGNOSTIC_UPDATER_MAX_VALUES_PER_TASK],
@@ -60,10 +66,59 @@ update_function_mockup_1(
   return RCL_RET_OK;
 }
 
+rcl_ret_t
+update_function_mockup_with_context(
+  diagnostic_value_t values[MICRO_ROS_DIAGNOSTIC_UPDATER_MAX_VALUES_PER_TASK],
+  uint8_t * number_of_values,
+  void * context)
+{
+  diagnostic_mockup_context_t * task_context =
+    static_cast<diagnostic_mockup_context_t *>(context);
+  ++task_context->calls;
+
+  *number_of_values = 1;
+  rclc_diagnostic_value_set_int(&values[0], task_context->value);
+
+  return RCL_RET_OK;
+}
+
 TEST(TestDiagnosticUpdater, create_diagnostic_task) {
   diagnostic_task_t task;
   rcl_ret_t rc = rclc_diagnostic_task_init(&task, 0, 0, &update_function_mockup_0);
   EXPECT_EQ(RCL_RET_OK, rc);
+  EXPECT_EQ(&update_function_mockup_0, task.function);
+  EXPECT_EQ(nullptr, task.function_with_context);
+  EXPECT_EQ(nullptr, task.context);
+}
+
+TEST(TestDiagnosticUpdater, create_diagnostic_task_with_context) {
+  diagnostic_mockup_context_t context = {73, 0};
+  diagnostic_task_t task;
+  rcl_ret_t rc = rclc_diagnostic_task_init_with_context(
+    &task, 0, 0, &update_function_mockup_with_context, &context);
+
+  ASSERT_EQ(RCL_RET_OK, rc);
+  EXPECT_EQ(&context, task.context);
+  EXPECT_EQ(nullptr, task.function);
+  EXPECT_EQ(&update_function_mockup_with_context, task.function_with_context);
+
+  rc = rclc_diagnostic_call_task(&task);
+  EXPECT_EQ(RCL_RET_OK, rc);
+  EXPECT_EQ(1, context.calls);
+  EXPECT_EQ(1, task.number_of_values);
+  EXPECT_EQ(73, task.values[0].int_value);
+}
+
+TEST(TestDiagnosticUpdater, create_diagnostic_task_with_context_rejects_nulls) {
+  diagnostic_task_t task;
+
+  EXPECT_EQ(
+    RCL_RET_INVALID_ARGUMENT,
+    rclc_diagnostic_task_init_with_context(
+      nullptr, 0, 0, &update_function_mockup_with_context, nullptr));
+  EXPECT_EQ(
+    RCL_RET_INVALID_ARGUMENT,
+    rclc_diagnostic_task_init_with_context(&task, 0, 0, nullptr, nullptr));
 }
 
 TEST(TestDiagnosticUpdater, create_diagnostic_values) {

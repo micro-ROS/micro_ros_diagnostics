@@ -67,6 +67,33 @@ colcon build --packages-select micro_ros_diagnostic_updater --cmake-args -DMICRO
 
 The updater won't publish statuses of task who's data is unchanged, this is to reduce the traffic and processing needed by the updater on each iteration. However, due to different reasons, one may want to force the updater to publish everything. This is done with a subscription that is added to the executor passed on the initialization of the updater. The subscriber will be listening for a message of type `std_msgs/msg/Empty`, and the topic is always `<namespace>/diagnostics_uros/force_update`. Keep in mind, the `<namespace>` can be modified as indicated above.
 
+### Pass context to a diagnostic task
+
+Use `rclc_diagnostic_task_init_with_context` when a diagnostic callback needs
+instance-specific state. The context pointer is stored in the task and passed
+as the final callback argument whenever the updater calls it:
+
+```c
+rcl_ret_t update_temperature(
+  diagnostic_value_t * values,
+  uint8_t * number_of_values,
+  void * context)
+{
+  temperature_sensor_t * sensor = (temperature_sensor_t *) context;
+  *number_of_values = 1;
+  rclc_diagnostic_value_set_float(&values[0], sensor->temperature);
+  return RCL_RET_OK;
+}
+
+diagnostic_task_t task;
+temperature_sensor_t sensor;
+rclc_diagnostic_task_init_with_context(
+  &task, hardware_id, updater_id, update_temperature, &sensor);
+```
+
+The original `rclc_diagnostic_task_init` remains available for callbacks that
+do not need a context.
+
 ## License
 
 The micro-ROS diagnostics framework packages are open-sourced under the Apache-2.0 license. See the [../LICENSE](LICENSE) file for details.
