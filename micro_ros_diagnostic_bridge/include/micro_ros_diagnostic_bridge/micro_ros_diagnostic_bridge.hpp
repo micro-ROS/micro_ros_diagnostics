@@ -14,7 +14,7 @@
 // limitations under the License.
 #pragma once
 
-#include <climits>
+#include <cstdint>
 #include <map>
 #include <memory>
 #include <string>
@@ -33,8 +33,6 @@ static const char UROS_DIAGNOSTICS_BRIDGE_TOPIC_OUT[] = "diagnostics";
 namespace uros_diagnostic_msg = micro_ros_diagnostic_msgs::msg;
 namespace diagnostic_msg = diagnostic_msgs::msg;
 
-constexpr int UNIQUE_POLYNOM = 4567;
-
 struct MicroROSDiagnosticUpdater
 {
   std::string name;
@@ -43,31 +41,29 @@ struct MicroROSDiagnosticUpdater
 
 struct MicroROSDiagnosticKey
 {
-  int updater_id;
-  int key_id;
+  uint16_t updater_id;
+  uint16_t key_id;
 
   bool operator<(const MicroROSDiagnosticKey & rhs) const
   {
-    return (updater_id * UNIQUE_POLYNOM + key_id) < (rhs.updater_id * UNIQUE_POLYNOM + rhs.key_id);
+    return std::tie(updater_id, key_id) < std::tie(rhs.updater_id, rhs.key_id);
   }
 };
 
 struct MicroROSDiagnosticValue
 {
   MicroROSDiagnosticKey task;
-  int value_id;
+  uint16_t value_id;
 
   bool operator<(const MicroROSDiagnosticValue & rhs) const
   {
-    return (task.updater_id * UNIQUE_POLYNOM * UNIQUE_POLYNOM + task.key_id * UNIQUE_POLYNOM +
-           value_id) <
-           (rhs.task.updater_id * UNIQUE_POLYNOM * UNIQUE_POLYNOM + rhs.task.key_id *
-           UNIQUE_POLYNOM + rhs.value_id);
+    return std::tie(task.updater_id, task.key_id, value_id) <
+           std::tie(rhs.task.updater_id, rhs.task.key_id, rhs.value_id);
   }
 };
 
-typedef std::map<int, std::string> HardwareMap;
-typedef std::map<int, MicroROSDiagnosticUpdater> UpdaterMap;
+typedef std::map<uint16_t, std::string> HardwareMap;
+typedef std::map<uint16_t, MicroROSDiagnosticUpdater> UpdaterMap;
 typedef std::map<MicroROSDiagnosticKey, std::string> KeyMap;
 typedef std::map<MicroROSDiagnosticValue, std::string> ValueMap;
 
@@ -77,16 +73,16 @@ public:
   explicit MicroROSDiagnosticBridge(const std::string & path = "");
 
   std::string lookup_hardware(
-    int hardware_id);
+    uint16_t hardware_id);
   const MicroROSDiagnosticUpdater lookup_updater(
-    int updater_id);
+    uint16_t updater_id);
   std::string lookup_key(
-    int updater_id,
-    int key);
+    uint16_t updater_id,
+    uint16_t key);
   std::string lookup_value(
-    int updater_id,
-    int key,
-    int value_id);
+    uint16_t updater_id,
+    uint16_t key,
+    uint16_t value_id);
 
 private:
   void read_lookup_table(const std::string & path);

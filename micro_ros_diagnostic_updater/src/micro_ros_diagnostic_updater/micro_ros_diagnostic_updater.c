@@ -61,7 +61,7 @@ rclc_diagnostic_value_set_bool(
 void
 rclc_diagnostic_value_lookup(
   diagnostic_value_t * kv,
-  int16_t value_id)
+  uint16_t value_id)
 {
   kv->value_type = micro_ros_diagnostic_msgs__msg__MicroROSDiagnosticKeyValue__VALUE_LOOKUP;
   if (kv->value_id != value_id) {
@@ -84,8 +84,8 @@ rclc_diagnostic_value_set_level(
 rcl_ret_t
 rclc_diagnostic_task_init(
   diagnostic_task_t * task,
-  int16_t hardware_id,
-  int16_t updater_id,
+  uint16_t hardware_id,
+  uint16_t updater_id,
   rcl_ret_t (* function)(
     diagnostic_value_t[MICRO_ROS_DIAGNOSTIC_UPDATER_MAX_VALUES_PER_TASK],
     uint8_t * number_of_values))

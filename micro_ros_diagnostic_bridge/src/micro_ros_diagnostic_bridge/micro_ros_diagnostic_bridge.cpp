@@ -14,6 +14,7 @@
 // limitations under the License.
 #include "micro_ros_diagnostic_bridge/micro_ros_diagnostic_bridge.hpp"
 
+#include <limits>
 #include <memory>
 #include <stdexcept>
 #include <string>
@@ -30,6 +31,27 @@ using micro_ros_diagnostic_msgs::msg::MicroROSDiagnosticKeyValue;
 using diagnostic_msgs::msg::DiagnosticArray;
 
 static inline std::string VALUE_NOT_FOUND = "NOTFOUND";
+
+namespace
+{
+uint16_t parse_index(const std::string & text, const std::string & name)
+{
+  try {
+    size_t parsed_length = 0;
+    const unsigned long value = std::stoul(text, &parsed_length);
+    if (text.empty() || text.front() == '-' || parsed_length != text.length() ||
+      value > std::numeric_limits<uint16_t>::max())
+    {
+      throw std::out_of_range("index is outside the uint16 range");
+    }
+    return static_cast<uint16_t>(value);
+  } catch (const std::invalid_argument &) {
+    throw std::runtime_error("Failed to parse " + name + " from lookup_table.");
+  } catch (const std::out_of_range &) {
+    throw std::runtime_error("Failed to parse " + name + " from lookup_table.");
+  }
+}
+}  // namespace
 
 MicroROSDiagnosticBridge::MicroROSDiagnosticBridge(const std::string & path)
 : Node("micro_ros_diagnostic_bridge"),
@@ -107,8 +129,8 @@ MicroROSDiagnosticBridge::MicroROSDiagnosticBridge(const std::string & path)
 
 std::string
 MicroROSDiagnosticBridge::lookup_key(
-  int updater_id,
-  int key)
+  uint16_t updater_id,
+  uint16_t key)
 {
   try {
     return key_map_.at({updater_id, key});
@@ -123,9 +145,9 @@ MicroROSDiagnosticBridge::lookup_key(
 
 std::string
 MicroROSDiagnosticBridge::lookup_value(
-  int updater_id,
-  int key,
-  int value_id)
+  uint16_t updater_id,
+  uint16_t key,
+  uint16_t value_id)
 {
   try {
     return value_map_.at({{updater_id, key}, value_id});
@@ -139,7 +161,7 @@ MicroROSDiagnosticBridge::lookup_value(
 }
 
 std::string
-MicroROSDiagnosticBridge::lookup_hardware(int hardware_id)
+MicroROSDiagnosticBridge::lookup_hardware(uint16_t hardware_id)
 {
   try {
     return hardware_map_.at(hardware_id);
@@ -153,7 +175,7 @@ MicroROSDiagnosticBridge::lookup_hardware(int hardware_id)
 }
 
 const MicroROSDiagnosticUpdater
-MicroROSDiagnosticBridge::lookup_updater(int updater_id)
+MicroROSDiagnosticBridge::lookup_updater(uint16_t updater_id)
 {
   try {
     return updater_map_.at(updater_id);
@@ -182,14 +204,11 @@ MicroROSDiagnosticBridge::read_lookup_table(const std::string & path)
   for (it = param_map.begin(); it != param_map.end(); it++) {
     if (it->first.compare("/hardware_ids") == 0) {
       for (auto & p : it->second) {
-        try {
-          hardware_map_[std::stoi(p.get_name())] = p.value_to_string();
-          RCLCPP_DEBUG(
-            get_logger(), "FOUND Parameter: %s HW_ID %s",
-            p.get_name().c_str(), p.value_to_string().c_str());
-        } catch (const std::invalid_argument &) {
-          throw std::runtime_error("Failed to parse hardware_id from lookup_table.");
-        }
+        const uint16_t hardware_id = parse_index(p.get_name(), "hardware_id");
+        hardware_map_[hardware_id] = p.value_to_string();
+        RCLCPP_DEBUG(
+          get_logger(), "FOUND Parameter: %s HW_ID %s",
+          p.get_name().c_str(), p.value_to_string().c_str());
       }
     }
 
@@ -205,16 +224,17 @@ MicroROSDiagnosticBridge::read_lookup_table(const std::string & path)
         }
 
         // Updater
+        const uint16_t updater_id = parse_index(updater_key, "updater_id");
         if (p.get_name().compare(updater_key + ".name") == 0) {
           updater_name = p.value_to_string();
           RCLCPP_DEBUG(
             get_logger(), "Updater Name: %s, Description: %s",
             updater_name.c_str(), updater_descr.c_str());
-          updater_map_[std::stoi(updater_key)] = {updater_name, updater_descr};
+          updater_map_[updater_id] = {updater_name, updater_descr};
         }
         if (p.get_name().compare(updater_key + ".description") == 0) {
           updater_descr = p.value_to_string();
-          updater_map_[std::stoi(updater_key)] = {updater_name, updater_descr};
+          updater_map_[updater_id] = {updater_name, updater_descr};
           RCLCPP_DEBUG(
             get_logger(), "Updater Name: %s, Description: %s",
             updater_name.c_str(), updater_descr.c_str());
@@ -230,15 +250,16 @@ MicroROSDiagnosticBridge::read_lookup_table(const std::string & path)
         if (p.get_name().compare(updater_key + ".keys." + key + ".name") == 0) {
           key_name = p.value_to_string();
           RCLCPP_DEBUG(get_logger(), "Key name: %s", key_name.c_str());
-          key_map_[{std::stoi(updater_key), std::stoi(key)}] = key_name;
+          key_map_[{updater_id, parse_index(key, "key_id")}] = key_name;
         }
 
         // Values lookup
         if (p.get_name().rfind(updater_key + ".keys." + key + ".values") == 0) {
           auto start = updater_key.length() + key.length() + 14;
           pos = p.get_name().find('.', start);
-          auto value_id = std::stoi(p.get_name().substr(start, pos - start));
-          value_map_[{{std::stoi(updater_key), std::stoi(key)}, value_id}] = p.value_to_string();
+          const uint16_t value_id = parse_index(
+            p.get_name().substr(start, pos - start), "value_id");
+          value_map_[{{updater_id, parse_index(key, "key_id")}, value_id}] = p.value_to_string();
           RCLCPP_DEBUG(get_logger(), "Value ID %d Value %s", value_id, p.value_to_string().c_str());
         }
       }

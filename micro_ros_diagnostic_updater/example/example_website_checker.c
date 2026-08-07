@@ -23,7 +23,7 @@
 static int my_diagnostic_status = 0;
 static int my_website_status = 0;
 // Hardware ID
-static const int16_t WEBSITE_SERIAL = 998;
+static const uint16_t WEBSITE_SERIAL = 998;
 // Updater ID
 static const uint16_t WEBSITE_ID = 0;
 // Task ID

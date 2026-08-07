@@ -32,7 +32,7 @@ typedef struct diagnostic_value_t
   bool bool_value;
   int32_t int_value;
   float double_value;
-  int16_t value_id;
+  uint16_t value_id;
 
   int8_t level;
   bool value_has_changed;
@@ -42,8 +42,8 @@ typedef struct diagnostic_task_t
 {
   uint8_t number_of_values;
   diagnostic_value_t values[MICRO_ROS_DIAGNOSTIC_UPDATER_MAX_VALUES_PER_TASK];
-  int16_t hardware_id;
-  int16_t updater_id;
+  uint16_t hardware_id;
+  uint16_t updater_id;
   rcl_ret_t (* function)(
     diagnostic_value_t[MICRO_ROS_DIAGNOSTIC_UPDATER_MAX_VALUES_PER_TASK],
     uint8_t * number_of_values);
@@ -51,7 +51,7 @@ typedef struct diagnostic_task_t
 
 typedef struct diagnostic_updater_t
 {
-  int16_t id;
+  uint16_t id;
   uint8_t num_tasks;
   diagnostic_task_t * tasks[MICRO_ROS_DIAGNOSTIC_UPDATER_MAX_TASKS_PER_UPDATER];
   rcl_publisher_t diag_pub;
@@ -75,7 +75,7 @@ void rclc_diagnostic_value_set_bool(
 
 void rclc_diagnostic_value_lookup(
   diagnostic_value_t * kv,
-  int16_t value_id);
+  uint16_t value_id);
 
 void rclc_diagnostic_value_set_level(
   diagnostic_value_t * kv,
@@ -84,8 +84,8 @@ void rclc_diagnostic_value_set_level(
 rcl_ret_t
 rclc_diagnostic_task_init(
   diagnostic_task_t * task,
-  int16_t hardware_id,
-  int16_t updater_id,
+  uint16_t hardware_id,
+  uint16_t updater_id,
   rcl_ret_t (* function)(
     diagnostic_value_t[MICRO_ROS_DIAGNOSTIC_UPDATER_MAX_VALUES_PER_TASK],
     uint8_t * number_of_values));

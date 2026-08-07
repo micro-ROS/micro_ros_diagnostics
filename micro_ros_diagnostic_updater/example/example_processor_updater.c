@@ -21,13 +21,13 @@
 
 static uint32_t my_diagnostic_temp = 0;
 // The updater id
-static const int16_t PROCESSOR_ID = 17;
+static const uint16_t PROCESSOR_ID = 17;
 // The hardware id
-static const int16_t PROCESSOR_SERIAL = 1001;
+static const uint16_t PROCESSOR_SERIAL = 1001;
 // Task id
-static const int16_t PROCESSOR_TEMPERATURE_KEY = 0;
+static const uint16_t PROCESSOR_TEMPERATURE_KEY = 0;
 // Task id
-static const int16_t PROCESSOR_LOAD_KEY = 1;
+static const uint16_t PROCESSOR_LOAD_KEY = 1;
 
 rcl_ret_t
 my_diagnostic_temperature(diagnostic_value_t * values, uint8_t * number_of_values)
