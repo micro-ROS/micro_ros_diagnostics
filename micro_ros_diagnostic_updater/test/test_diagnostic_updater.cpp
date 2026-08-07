@@ -15,6 +15,7 @@
 // limitations under the License.
 #include <stdio.h>
 #include <iostream>
+#include <limits>
 
 #include <gtest/gtest.h>
 
@@ -93,6 +94,21 @@ TEST(TestDiagnosticUpdater, create_diagnostic_values) {
   EXPECT_EQ(
     value.level,
     micro_ros_diagnostic_msgs__msg__MicroROSDiagnosticStatus__WARN);
+
+  rclc_diagnostic_value_lookup(&value, std::numeric_limits<uint16_t>::max());
+  EXPECT_EQ(value.value_id, std::numeric_limits<uint16_t>::max());
+}
+
+TEST(TestDiagnosticUpdater, task_ids_use_full_uint16_range) {
+  diagnostic_task_t task;
+  const uint16_t max_id = std::numeric_limits<uint16_t>::max();
+
+  rcl_ret_t rc = rclc_diagnostic_task_init(
+    &task, max_id, max_id, &update_function_mockup_0);
+
+  EXPECT_EQ(RCL_RET_OK, rc);
+  EXPECT_EQ(max_id, task.hardware_id);
+  EXPECT_EQ(max_id, task.updater_id);
 }
 
 TEST(TestDiagnosticUpdater, create_updater) {

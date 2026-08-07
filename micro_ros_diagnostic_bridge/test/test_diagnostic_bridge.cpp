@@ -17,6 +17,7 @@
 
 #include <gtest/gtest.h>
 #include <rclcpp/rclcpp.hpp>
+#include <limits>
 #include <string>
 
 
@@ -52,11 +53,13 @@ TEST_F(TestDiagnosticBridge, parsing) {
  */
 TEST_F(TestDiagnosticBridge, translating) {
   MicroROSDiagnosticBridge * bridge = new MicroROSDiagnosticBridge(LOOKUP_TABLE_PATH);
+  const uint16_t max_id = std::numeric_limits<uint16_t>::max();
 
   // Hardware
   EXPECT_EQ("esp32_01", bridge->lookup_hardware(0));
   EXPECT_EQ("esp32_foo", bridge->lookup_hardware(17));
   EXPECT_EQ("esp32_bar", bridge->lookup_hardware(42));
+  EXPECT_EQ("esp32_max", bridge->lookup_hardware(max_id));
 
   EXPECT_NO_THROW(bridge->lookup_hardware(23)) << "should be rclcpp error log";
   EXPECT_EQ("NOTFOUND", bridge->lookup_hardware(23));
@@ -70,6 +73,7 @@ TEST_F(TestDiagnosticBridge, translating) {
   EXPECT_EQ(
     "Measuring processor temperature and load.",
     bridge->lookup_updater(17).description);
+  EXPECT_EQ("Maximum IDs", bridge->lookup_updater(max_id).name);
 
   EXPECT_NO_THROW(bridge->lookup_updater(23)) << "should be rclcpp error log";
   EXPECT_EQ("NOTFOUND", bridge->lookup_updater(23).name);
@@ -79,6 +83,7 @@ TEST_F(TestDiagnosticBridge, translating) {
   EXPECT_EQ("return code", bridge->lookup_key(0, 23));
   EXPECT_EQ("temp", bridge->lookup_key(17, 0));
   EXPECT_EQ("load", bridge->lookup_key(17, 1));
+  EXPECT_EQ("max key", bridge->lookup_key(max_id, max_id));
 
   EXPECT_NO_THROW(bridge->lookup_key(17, 23)) << "should be rclcpp error log";
   EXPECT_EQ("NOTFOUND", bridge->lookup_key(17, 23));
@@ -86,6 +91,7 @@ TEST_F(TestDiagnosticBridge, translating) {
 
   // Values
   EXPECT_EQ("ok", bridge->lookup_value(0, 23, 200));
+  EXPECT_EQ("max value", bridge->lookup_value(max_id, max_id, max_id));
 
   EXPECT_NO_THROW(bridge->lookup_value(0, 0, 0)) << "should be rclcpp error log";
   EXPECT_EQ("NOTFOUND", bridge->lookup_value(0, 0, 0));
